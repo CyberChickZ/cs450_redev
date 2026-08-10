@@ -163,7 +163,7 @@ That's it! Now our VAO contains a *vertex attribute* at position 0 that contains
 
 But, before we go, we want to make sure we clean up after ourselves by *unbinding* both our VAO and VBO. We have to unbind the VAO first using `glBindVertexArray(0)`. Using `0` instead of a VAO ID automatically unbinds the current VAO. Similarly, we unbind the current VBO using `glBindBuffer(GL_ARRAY_BUFFER, 0)`. Not doing these two steps can cause bugs that are very tricky to track down, so make sure you do it and in the correct order!
 
-Whew! That was a bunch to take in, but we aren't done yet! Now, we actually need to *use* the buffer data by sending it to the shader. As we did when we drew our first point (see ![Get to the Point](../week_2/get_to_the_point.md)), we have to load our shader program: `glUseProgram(renderingProgram)`.
+Whew! That was a bunch to take in, but we aren't done yet! Now, we actually need to *use* the buffer data by sending it to the shader. As we did when we drew our first point (see [Get to the Point](../week_2/get_to_the_point.md)), we have to load our shader program: `glUseProgram(renderingProgram)`.
 
 Now we can load our desired VAO to pass to the shader(s): `glBindVertexArray(vao[0])`. Again, *binding* just tells OpenGL what context we wish to use for the next function calls. Since we already filled the VAO in `init()`, we are all ready to call `glDrawArrays(GL_TRIANGLES, 0, 3)`. Instead of me *telling* you what each of these things do, why don't you guess?
 

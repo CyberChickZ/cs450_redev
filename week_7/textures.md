@@ -1,4 +1,5 @@
 # CLOs
+
 * CLO8 - Use OpenGL to perform texture mapping.
 
 # Introduction
@@ -111,10 +112,10 @@ Typically, a 3D artist will create custom UV-mappings (aka ST-mapping) for each 
 
 You can also write *texture coordinates* to go beyond the `[0..1]` range. This will result in *tiling/wrapping*. OpenGL supports four types of tiling.
 
-* `GL_REPEAT` - The integer portion of the texture coordinate is ignored and the texture just repeats
+* `GL_REPEAT` - The integer portion of the texture coordinate is ignored, and the texture just repeats
 * `GL_MIRRORED_REPEAT` - Similar to above, but this time the coordinates are negated when the integer portion is odd
 * `GL_CLAMP_TO_EDGE` - Any coordinates less than 0 or greater than 1 are "clamped" to 0 and 1 respectively
-* `GL_CLAMP_TO_BORDER` - Any coordinates outside of `[0..1]` are given a specified "border" color
+* `GL_CLAMP_TO_BORDER` - Any coordinates outside `[0..1]` are given a specified "border" color
 
 To demonstrate each of these, I am going to modify our cube object's texture coordinates. Below, you will see that I have extended the texture coordinates beyond `[0..1]` to `[-0.5..1.5]`. This will allow us to center my handsome face in the middle of the cube face.
 
@@ -171,7 +172,7 @@ Let's take a look at an exaggerated example of how it works.
 
 OpenGL does a *very* good job of interpolating texture coordinates across our objects, but sometimes things get *complicated* and it can start having fits. One thing it can struggle with is drawing textures very far away from the camera or at drastic angles.
 
-The reason for this is that as an object gets smaller on the screen it represents fewer screen pixels. Each pixel now covers a large area of the texture. Very likely multiple texels could map to each pixel and they all likely don't share a color! This issue is called *aliasing* and it can show up as "shimmering" when objects are in motion. Take a look!
+The reason for this is that as an object gets smaller on the screen it represents fewer screen pixels. Each pixel now covers a large area of the texture. Very likely multiple texels could map to each pixel, and they all likely don't share a color! This issue is called *aliasing*, and it can show up as "shimmering" when objects are in motion. Take a look!
 
 ![Gif of a brick floor showing shimmering when turning mipmapping off](../images/week_7/no_mipmapping.gif)
 
@@ -336,7 +337,7 @@ void main()
 }
 ```
 
-This is where we set our texture uniforms. The first is of the type `sampler2D`. This *does not* hold our texture data; it holds the *texture unit index* that points to the texture object on the GPU (Texture Unit 0 in our code). Notice that we have to specify the dimensionality of our sampler. This is because OpenGL can also use other types of samplers.[^7] 
+This is where we set our texture uniforms. The first is of the type `sampler2D`. This *does not* hold our texture data; it holds the *texture unit index* that points to the texture object on the GPU (Texture Unit 0 in our code). Notice that we have to specify the dimensionality of our sampler. This is because OpenGL can also use other types of samplers.[^7]
 
 We also set `useTexture`. This allows us to only apply texture colors to our pixels if a texture is actually loaded. Notice how we apply the texture color. We simply call `texture(uTex, texCoord)`. This returns a `vec4` containing the color information for the provided texture coordinates (`texCoord`). We then grab only the `rgb` values (we aren't dealing with transparencies) and multiply the texture color by the `lightingColor`, which has already combined the object color with the lighting effects.
 
@@ -344,7 +345,7 @@ We also set `useTexture`. This allows us to only apply texture colors to our pix
 
 Above, I mentioned that I had to refactor the loading code to get it ready to set *Texture Parameters*. We will be adding these lines of code to the `loadTexture()` function after checking for a valid Texture ID.
 
-What is a *Texture Parameters*? For us, it means:
+What is are *Texture Parameters*? For us, it means:
 
 * Wrapping/Tiling
 * Background Color

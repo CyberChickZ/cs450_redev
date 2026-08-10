@@ -1,4 +1,5 @@
 # ClOs
+
 * CLO7 - Use OpenGL to perform light-source shading
 
 # Introduction
@@ -58,12 +59,12 @@ Here is a quick rundown of how changing each of these values will affect the loo
 | Ambient ||
 | --- | -- |
 | Increase | entire object becomes brighter, including the dark side | 
-| Decrease | the darkside of the object gets darker |
+| Decrease | the dark side of the object gets darker |
 | Set to Zero | anything part of the object not hit by light is pure black |
 
 | Diffuse ||
 | --- | --- |
-| Increase | the lit side becomes brighter and you can see more of the shape |
+| Increase | the lit side becomes brighter, and you can see more of the shape |
 | Decrease | the lit side becomes darker and the object looks flatter |
 | Set to Zero | Only ambient and specular light object: mostly dark with highlights |
 
@@ -383,7 +384,7 @@ In 1973, Bui Tuong Phong created an algorithm that calculated the lighting *per-
 
 ![Screen with a low-poly teapot with Blinn-Phong shading](../images/week_6/phong_blinn_low.png)
 
-Notice how the *specular* highlights don't follow the triangle edges any more. Blinn-Phong shading really makes it hard to see *any* triangles unless you are looking at the outline. In this way, Blinn-Phong can take low-poly objects and make them look much higher resolution.
+Notice how the *specular* highlights don't follow the triangle edges anymore. Blinn-Phong shading really makes it hard to see *any* triangles unless you are looking at the outline. In this way, Blinn-Phong can take low-poly objects and make them look much higher resolution.
 
 The shader code is roughly the same, but the role the Vertex and Fragment shader have is reversed.
 
@@ -608,7 +609,7 @@ Then in `main()` you add the code to calculate the distance to the light and the
 ```GLSL
 // Distance attenuation (point light)
 float distance = length(uLight.position - fragPos);
-float attenuation =	1.0f / (constant + linear * distance + quadratic * distance * distance);
+float attenuation = 1.0f / (constant + linear * distance + quadratic * distance * distance);
 ```
 
 Now, we just need to multiply both `diffuse` and `specular` by this `attenuation` variable. Note, *ambient* light isn't attenuated, it comes from "everywhere".
@@ -622,10 +623,9 @@ That's it! Everything else runs as normal. If you don't want to use attenuation,
 
 # Lights Out
 
-If I am being honest, this lesson ended up being much more indepth than I had first imagined. This is a good thing, we really dug deep into how lighting is calculated. Again, I refrained from *handing* you the code to get all this working. Please make sure you are actually applying these techniques during/after the lesson review. If you struggled with anything, please reach out on the discussion board for help.
+If I am being honest, this lesson ended up being much more in-depth than I had first imagined. This is a good thing, we really dug deep into how lighting is calculated. Again, I refrained from *handing* you the code to get all this working. Please make sure you are actually applying these techniques during/after the lesson review. If you struggled with anything, please reach out on the discussion board for help.
 
 Given the open-ended nature of this lesson, please push yourselves to create some complex scenes. You could even make the light move!
-
 
 [^1]: Technically, they don't "pick up" color. Instead, the energy they have is changed by the materials they interact with. High-energy photons are blue to violet. Low-energy photons are red and orange.
 [^2]: *Ray Tracing*, which mimics photons to some degree, has become the gold standard of lighting, with Nvidia and AMD both creating specialized chips to manage the massive calculations. These *Physically Based Rendering* (RBR) techniques are beyond the scope of what we can implement in this course, but are worth exploring.

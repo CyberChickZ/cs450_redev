@@ -79,7 +79,7 @@ struct LightUBO {
     float pad2;
     glm::vec3 lightSpecular {1.0f, 1.0f, 1.0f};
     float pad3;
-	glm::vec3 lightAttenuation{ 0.5f, 0.03f, 0.003f };
+    glm::vec3 lightAttenuation{ 0.5f, 0.03f, 0.003f };
     float pad4;
 };
 ```
@@ -148,6 +148,7 @@ layout(std140) uniform Camera {
     mat4 uP;
 };
 ```
+
 **NOTA BENE**: we don't have to do any padding here. A `mat4`'s size matches its *base alignment*. Additionally, the `Camera` block is 128-bytes, which is a multiple of 16-bytes.
 
 Reminder: Previously, we sent in our *Model View Matrix* as `uMV`. Now, we are sending the *View Matrix* separate from the *Model Matrix*, so we will have to rename our `uniform mat4 uMV` to `uniform mat4 uM`. This also means we will need to update what we fill it with in our application.
@@ -414,6 +415,7 @@ Now need to get our application set up for using *UBO*s. We are going to start b
 GLuint cameraUBO = 0;
 GLuint lightUBO = 0;
 ```
+
 Next, we need to create a function to handle the binding of our buffer data.  This should look familiar as it is similar to how we handled our *VBO* data in earlier lessons. Back then, we:
 
 1. Generated our buffers
@@ -454,7 +456,7 @@ Let's highlight what is the same and what is different.
 * Both use `glGenBuffers()` in the same way
   * 1<sup>st</sup> argument - how many buffers to generate
   * 2<sup>nd</sup> argument - the variable used to save the ID
-* Both use `glBindBuffer()` in a similar way
+* Both use `glBindBuffer()` similarly
   * 1<sup>st</sup> argument - the type of buffer. *UBO*s use `GL_UNIFORM_BUFFER` (duh) vs. `GL_ARRAY_BUFFER`
   * 2<sup>nd</sup> argument - the buffer ID
 * Both use `glBufferData()` in similar ways
@@ -498,6 +500,7 @@ void updateCameraUBO(GLuint cameraUBO, const glm::mat4& view, const glm::mat4& p
 We again have to *bind* our buffer so OpenGL knows which one we want to manipulate. Then we need to fill the different `Camera` block members. We do this with `glBufferSubData()`. We call this twice: once for `view` and once for `projection`.
 
 Let's break down the `glBufferSubData()` parameters
+
 1. The type of buffer (`GL_UNIFORM_BUFFER`)
 2. The *offset* where the block member starts
 3. The size of the block member to be set

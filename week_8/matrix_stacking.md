@@ -1,4 +1,5 @@
 # CLOs
+
 * CLO3 - Create a dynamic 3D scene using OpenGL
 * CLO4 - Dynamically alter the viewing of a 3D scene using OpenGL
 * CLO6 - Use OpenGL functions to create and apply single and compound transformations
@@ -28,13 +29,13 @@ In other words, to place a person in a seat the location of the cruise ship isn'
 
 # Matrix Stacking
 
-There are multiple ways of implementing *Hierarchical Modeling* in an OpenGL program. The most *traditional*, and the one that is the easiest to implement with our current codebase, is called *Matrix Stacking*. It gets its name because of how it uses `stack` objects to create the hierarchy. This was such a common way of doing things back in 1990s that OpenGL had dedicated built-ins: `glPushMatrix()` and `glPopMatrix()`.[^2]
+There are multiple ways of implementing *Hierarchical Modeling* in an OpenGL program. The most *traditional*, and the one that is the easiest to implement with our current codebase, is called *Matrix Stacking*. It gets its name because of how it uses `stack` objects to create the hierarchy. This was such a common way of doing things back in the 1990s that OpenGL had dedicated built-ins: `glPushMatrix()` and `glPopMatrix()`.[^2]
 
 While OpenGL's Core Profile no longer supports these functions, there is nothing stopping us from using `std::stack` to implement the same concept. If you aren't familiar with a stack, here is a quick crash course.
 
 The best way to think of a *stack* is to imagine a physical stack of books. You can add to the stack, but only from the top. You can remove a book, but not from the middle, only from the top. This demonstrates the *First In Last Out* (*FILO*) concept. The only way to get the first item added to the stack off is to remove (or *pop*) off everything on top of it.
 
-As we draw our scene, we will add more and more transforms to our matrix, and *push* it onto the stack so that later calls have access to the transforms. We will then *pop* it off to move back up the heirachy. 
+As we draw our scene, we will add more and more transforms to our matrix, and *push* it onto the stack so that later calls have access to the transforms. We will then *pop* it off to move back up the hierarchy.
 
 I know it is complicated to visualize, so let's get to coding so we can get our hands dirty! To demonstrate *Matrix Stacking*, we are going to be implementing a *crude* Solar System!
 
@@ -48,9 +49,9 @@ Now, I want come clean. The way we set up our Object class was very helpful for 
 
 Unfortunately, our code is not set up to handle *Matrix Stacking*. But remember, we aren't going to get frustrated, we are going to *refactor*! Don't worry, the changes are minor, but it is good practice.
 
-In order for us to use *Matrix Stacking* we need to be able to add the *World Matrix* to our object's *Model Matrix*. I just made up that term, *World Matrix*. It is basically all the transforms that have occured higher up in the hierachy. To accomplish this, our `draw()` function needs to accept another matrix.
+In order for us to use *Matrix Stacking* we need to be able to add the *World Matrix* to our object's *Model Matrix*. I just made up that term, *World Matrix*. It is basically all the transforms that have occurred higher up in the hierarchy. To accomplish this, our `draw()` function needs to accept another matrix.
 
-In case you haven't been updating your Object class as we go through this course (shame!), here is a barebones version: [object_light.hpp](../downloadable_files/week_7/object_light.hpp) and [object_light.cpp](../downloadable_files/week_7/object_light.cpp).
+In case you haven't been updating your Object class as we go through this course (shame!), here is a bare-bones version: [object_light.hpp](../downloadable_files/week_7/object_light.hpp) and [object_light.cpp](../downloadable_files/week_7/object_light.cpp).
 
 We are going to start in our header file. We have two options when it comes to `draw()`. We can either rewrite our current version, but make it so it can be used for both normal draws *and* our new purpose, or we can *overload* it.[^3] We are going to *overload* `draw()`.
 
@@ -71,7 +72,7 @@ In `object_light.cpp` we need to copy-and-paste the entire `draw()` function. Ma
 glm::mat4 finalModelMatrix = modelFromStack * modelMatrix;
 ```
 
-The order in which we do this multiplication is *crucial*. The `modelMatrix` has to be on the right or you will get undesired transforms. Remember, these matrices are multiplied right-to-left.
+The order in which we do this multiplication is *crucial*. The `modelMatrix` has to be on the right, or you will get undesired transforms. Remember, these matrices are multiplied right-to-left.
 
 Now, since `modelMatrix` has been combined with `modelFromStack`, we need to update how we calculate `mv`.
 
@@ -100,7 +101,7 @@ For each of our objects, we need to initialize it and then load the texture. For
 ```C++
 if (!objectName.init("shader_name.vert", "shader_name.frag", "objectName.obj")) {
         std::cerr << "Failed to load objectName" << std::endl;
-	}
+    }
     
     if (!objectName.loadTexture("textureName.jpg")) {
         std::cerr << "Failed to load objectName texture" << std::endl;
@@ -150,7 +151,7 @@ modelStack.top() = glm::translate(modelStack.top(), glm::vec3(0.0f, 0.0f, -50.0f
 
 The top of our stack will always hold the *current state* of our hierarchy. For this reason, we need to save our translation using `.top()`.
 
-Whenever we dive *deeper* into our hierarchy, we need to save the *current state*. It may seem silly to push the same matrix on the stack again, but later we will be directly transforming the top of the stack, and we need to be able to "undo" those so our next object has the appropriate values in the *World Matrix*. Things will make more sense shortly (fingers crossed!).
+Whenever we dive *deeper* into our hierarchy, we need to save the *current state*. It may seem silly to push the same matrix on the stack again, but later we will be directly transforming the top of the stack, and we need to be able to "undo" those, so our next object has the appropriate values in the *World Matrix*. Things will make more sense shortly (fingers crossed!).
 
 So, we are about to render our Sun object, what do we need to do?
 
@@ -383,7 +384,7 @@ Build and run your new shader code and you should see:
 
 ![Screen with a Sun in the middle and the Earth and Moon orbiting on the right. The sun is brighter than the previous image, but the earth is now illuminated on the correct side](../images/week_8/solar_system_part3.png)
 
-Go, take your spaceship and fly around to the backside. It should now be illuminated completely, with no dim areas. You have just learned why you sometimes need specific shaders for specific objects. Don't be afraid to make custom shaders if you want to apply a fun effect to an object. 
+Go, take your spaceship and fly around to the backside. It should now be illuminated completely, with no dim areas. You have just learned why you sometimes need specific shaders for specific objects. Don't be afraid to make custom shaders if you want to apply a fun effect to an object.
 
 Heck, there is no time like the present! Let's do just that!
 
@@ -487,7 +488,7 @@ As I have become accustomed to do, I want to challenge you to expand on what we 
 
 * Add more planets (think about which "Level" to put these)
 * Give a planet/moon a different angle of orbit. Mercury's orbit is tilted by 7&deg;
-* Make the orbits more realistic by making them *eliptical*
+* Make the orbits more realistic by making them *elliptical*
 * Use the Space Shuttle model from Week 7 and have it orbit the Earth
 
 I liked the last one so much I had to do it myself!

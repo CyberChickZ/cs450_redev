@@ -1,4 +1,5 @@
 # CLOs
+
 * CLO4 - Dynamically alter the viewing of a 3D scene using OpenGL.
 
 # Introduction
@@ -44,7 +45,7 @@ glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 float cameraSpeed = 0.25f;
 ```
 
-The above code places our camera centered on the XY-axis, but pulled back a bit (remember, we are aiming in the negative direction). It also specifies the direction it is pointing (`cameraDirection`), which is different than what we had above when calling `lookAt()`. 
+The above code places our camera centered on the XY-axis, but pulled back a bit (remember, we are aiming in the negative direction). It also specifies the direction it is pointing (`cameraDirection`), which is different from what we had above when calling `lookAt()`.
 
 This is because `cameraTarget` is a specific point in the world. Normally, we aren't locking our camera onto a particular point in our scene. Instead, we just want to "look at" something directly in front of the camera. Therefore, `cameraDirection` is a vector we add to our `cameraPos` to calculate the needed point (1.0f in front).
 
@@ -70,7 +71,7 @@ We now need to use the *View Matrix* to create our *Model-View Matrix* (`mv`). I
 glm::mat4 mv = view * model;
 ```
 
-Pay attention to the order of the multipliaction. In the shader, we want to apply the *Model Matrix* to our vertex *before* we apply our *View Matrix*. Therefore, we need to have `model` all the way on the right of the operation.
+Pay attention to the order of the multiplication. In the shader, we want to apply the *Model Matrix* to our vertex *before* we apply our *View Matrix*. Therefore, we need to have `model` all the way on the right of the operation.
 
 Go ahead and run our new code. You should see the same cube as before, but a little further away. Why is that?
 
@@ -80,7 +81,7 @@ Go ahead and run our new code. You should see the same cube as before, but a lit
 
 OK, we have built our camera. Now it is time to move it! We are going to keep it simple at first, then move into something more complex. For now, we are going to use the same approach we did when we programmed our "Pause" key.
 
-You are free to map the movement to any keys you wish, but I am an old-school FPS player so I am going to use WASD.[^4] We need to go back to our `key_callback()`. The first thing we want to do is refactor our `if` statement.
+You are free to map the movement to any keys you wish, but I am an old-school FPS player, so I am going to use WASD.[^4] We need to go back to our `key_callback()`. The first thing we want to do is refactor our `if` statement.
 
 ```C++
 if (action == GLFW_PRESS) {
@@ -107,7 +108,7 @@ if (key == GLFW_KEY_D) {
 }
 ```
 
-Let's unpack this. The first two `if` statements cover forward and backward movement (respectively). These movements are fairly straightforward to calculate as we want to move along the same vector the camera is pointing (`cameraDirection`). We simply multiple our `cameraSpeed` by the directcional vector and then add/subtract it to move forward/backward.
+Let's unpack this. The first two `if` statements cover forward and backward movement (respectively). These movements are fairly straightforward to calculate as we want to move along the same vector the camera is pointing (`cameraDirection`). We simply multiply our `cameraSpeed` by the directional vector and then add/subtract it to move forward/backward.
 
 Moving side-to-side is a bit tricky. Unlike for forward/backward, we don't have a direction vector already defined, we need to calculate it using vector *cross product*. Remember back to our [3D Math Overview](../week_4/3d_math_overview.md) and what the cross product was used for. If we cross two vectors we will get a new vector that is perpendicular to *both*. 
 
@@ -156,7 +157,7 @@ void processInput(GLFWwindow* window)
 
 Since we need to check for button presses *each frame*, we can put this either in `display()` or in our render loop in `main()`. I prefer the latter, and calling `processInput(window)` right after we check to see if we are paused just *feels* right. Go head and call our new function wherever you wish and run our changes.
 
-You should now be able to zip around the scene by pressing and holding down the movement buttons. It may be *zipping* a bit too quickly for some of you. This is because our movement speed increases linearly with framerate. The more frames your computer generates, the faster you will move.
+You should now be able to zip around the scene by pressing and holding down the movement buttons. It may be *zipping* a bit too quickly for some of you. This is because our movement speed increases linearly with frame rate. The more frames your computer generates, the faster you will move.
 
 This is not ideal; we want our movement to be consistent across all users. To fix this, we need to link our movement speed to *time*. We are going to need more globals...
 
@@ -187,7 +188,7 @@ Yay! We can move around our scene, but we are still missing a really important f
 
 There are two types of *turns* we need to program. The first is *Pitch*, which is pivoting the camera up and down. The second is *Yaw*, which is pivoting the camera from side to side. We could implement these using key presses like we did for our directional movement, but that is boring! Let's go all out and implement *mouse-look*!
 
-Previously, our camera was always oriented down the negative Z-axis, so we never had to update our `cameraDirection` variable. With mouse-look, we will need to calculate a new direction in realtime. 
+Previously, our camera was always oriented down the negative Z-axis, so we never had to update our `cameraDirection` variable. With mouse-look, we will need to calculate a new direction in real-time. 
 
 Before we start writing code, I want us to look at the math. Note, I said *look*, not understand. This isn't a math course, so you only need to implement the known algorithms. As we change *pitch* and *yaw* we need to update our `cameraDirection` vector using the following:
 
@@ -388,5 +389,5 @@ Some other things to try:
 [^1]: I can't utter that phrase without thinking of [this scene from ID4](https://tv.getyarn.io/yarn-clip/f5364a72-2e63-4e4c-9bce-55f714f10543)
 [^2]: Yes, it is always at the origin, but where is it "effectively" in our scene.
 [^3]: [Roll, Pitch, and Yaw](https://howthingsfly.si.edu/flight-dynamics/roll-pitch-and-yaw)
-[^4]: Refers to ordering of the keys used in traditional First Person Shooters. `W` (Forward), `S` (Back), `A` (Left), and `D` (Right).
+[^4]: Refers to ordering of the keys used in traditional First-Person Shooters. `W` (Forward), `S` (Back), `A` (Left), and `D` (Right).
 [^5]: I remember a time when I was taught that globals were sloppy programs! But needs must.

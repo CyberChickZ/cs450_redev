@@ -1,4 +1,5 @@
 # CLOs
+
 * CLO9 - Explain the ways Vertex Buffer Objects can improve your display performance
 
 # Introduction
@@ -9,7 +10,7 @@ Of course there is! In this lesson, we are going to learn how to load object dat
 
 # OBJ Files
 
-There are many different ways to store object data for use with a 3D application, but we are going to focus on `.obj` files. This file format first introduced in the late 1980s by Wavefront Technologies. It started out as a proprietary format, but has since moved to being open file format. 
+There are many different ways to store object data for use with a 3D application, but we are going to focus on `.obj` files. This file format first introduced in the late 1980s by Wavefront Technologies. It started out as a proprietary format, but has since moved to being open file format.
 
 Without going into great detail, each `.obj` file contains:
 
@@ -28,7 +29,7 @@ This *indexing* helps reduce the data we need to store. Indexing would allow the
 
 To help us, we are going to use a framework called *TinyObjLoader*. Go ahead and download the `tiny_obj_loader.h` file from its [GitHub repo](https://github.com/tinyobjloader/tinyobjloader). We are going to want to add this to our Visual Studio Template.
 
-The easiest way to do this is to create a new project using our OpenGL Template. Once it is created and saved, you need to navigate to where the project folder is in the File Explorer. Once you locate it, you need to identify the folder holding the `.vcxproj` file. Next to this file you want to copy the header file we just downloaded. 
+The easiest way to do this is to create a new project using our OpenGL Template. Once it is created and saved, you need to navigate to where the project folder is in the File Explorer. Once you locate it, you need to identify the folder holding the `.vcxproj` file. Next to this file you want to copy the header file we just downloaded.
 
 Go back to Visual Studio, and right click on "Header Files" in the Solution Explorer and click "Add Existing Item..." Navigate to where you just copied the header file and add it to the project. We need to do it this way so that when we export the template, the header file will be included and not just linked.
 
@@ -119,7 +120,7 @@ While this is not how the computer uses a header file, I want you to think of it
 
 ## Member Functions
 
-Now, let's look at the some of the new functions.
+Now, let's look at some of the new functions.
 
 * `init()` - used to specify shader and object file names
 * `loadTexture()` - used to specify texture file name (provided for later use)
@@ -210,7 +211,7 @@ Next, we need to delete our `loadShaderSource()` and `buildShaderProgram()` func
 
 Scroll down to `init()` and get ready to be bold! Delete *everything* except our projection matrix declaration and `glEnable(GL_DEPTH_TEST)`. We will be coming back to this shortly; after we do some more gutting.
 
-Next on our victim list is `display()`. We want to trash *everything* except for our `glClear()` call and our declaration of our `view` matrix. Again, all of the removed code now lives in our Object class. We will return here as well to transform and draw our new objects.
+Next on our victim list is `display()`. We want to trash *everything* except for our `glClear()` call and our declaration of our `view` matrix. Again, all the removed code now lives in our Object class. We will return here as well to transform and draw our new objects.
 
 ## We can rebuild it, we have the technology[^3]
 
@@ -259,13 +260,13 @@ In `display()` we need to replace the transforms/animations we deleted. We also 
     cube.draw(view, proj);
 ```
 
-Let's break this down. Since we are animating these objections, we need to make sure we call `resetTransform()` on each of our objects. If we fail to do this, the rotations will compound over and over again.[^4] Now we can proceed with placing our objects in their world location (`setPosition()`). We can then transform them to our hearts content using our Object member functions. 
+Let's break this down. Since we are animating these objections, we need to make sure we call `resetTransform()` on each of our objects. If we fail to do this, the rotations will compound over and over again.[^4] Now we can proceed with placing our objects in their world location (`setPosition()`). We can then transform them to our hearts content using our Object member functions.
 
 I have recreated the same animation we had for the cube in our last lesson. Take a moment to compare this new version to the previous one. This new code should be much easier to read.
 
 For the teapot, I decided to push it back into the distance, scale it down by half (it was a huge object), and then give it a rotation around the Y-axis. You can use these transforms or play around with your own.
 
-After we are satisified with all the transforms, we need to call `draw()` for each object. We pass into `draw()` both the `view` and `proj` matrices. In our previous code, we calculated the `mv` matrix in `display()` and then passed it along to the shader. Now, this handled by `draw()`. I can't get over how neat this code looks now.
+After we are satisfied with all the transforms, we need to call `draw()` for each object. We pass into `draw()` both the `view` and `proj` matrices. In our previous code, we calculated the `mv` matrix in `display()` and then passed it along to the shader. Now, this handled by `draw()`. I can't get over how neat this code looks now.
 
 The last thing we have to do is tidy up after ourselves. AT the bottom of `main()`, before we destroy the window, we need to call `.cleanup()` on each of our objects.
 

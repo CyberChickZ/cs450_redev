@@ -24,7 +24,7 @@ void key_callback(GLFWwindow * window, int key, int scancode, int action, int mo
 
 The code above specifies the callback we will use to gather all our key presses. The parameters must be set up exactly as shown, otherwise it won't work. Let's look at each of them.
 
-* *window* - this is the window we are going to be looking for key presses in. In this course, we will only ever have the one window, but it technically possible to have multiple.
+* *window* - this is the window we are going to be looking for key presses in. In this course, we will only ever have the one window, but it is technically possible to have multiple.
 * *key* - numerical value representing the *key* pressed. Each value is defined using a human-readable macro (called "Key Tokens"). `GLFW_KEY_P` has the value of `80`.[^2]
 * *scancode* - platform-specific hardware code for keys (rarely used).
 * *action* - specifies the *event* related to the key. `GLFW_PRESS` means the key has been pressed down whereas `GLFW_RELEASE` means the key has been released. There also is `GLFW_REPEAT` for a key being *held* down.
@@ -44,7 +44,7 @@ Now, let's make the key press *do something*, but what? Any guesses as to why I 
 
 **Hide Answer: We are going to PAUSE our animation!**
 
-In order to allow our key press to stop our animations, we need to make some changes. First, we need to create a *toggle flag* which will hold the current state of "pausedness" (not a word but we are going with it!). Each time we press the key, we want the flag to flip to the opposite.
+In order to allow our key press to stop our animations, we need to make some changes. First, we need to create a *toggle flag* which will hold the current state of "pausedness" (not a word, but we are going with it!). Each time we press the key, we want the flag to flip to the opposite.
 
 So, at the top of our file, where we have our globals, add `bool paused = false;`. When `paused` is `true`, our animations won't run and vice versa.
 
@@ -97,12 +97,12 @@ void togglePause() {
     if (!paused) {
         paused = true;
         std::cout << "PAUSED" << std::endl;
-		pauseStartTime = glfwGetTime();
+        pauseStartTime = glfwGetTime();
     }
     else {
         paused = false;
         std::cout << "UNPAUSED" << std::endl;
-		totalPausedTime += glfwGetTime() - pauseStartTime;
+        totalPausedTime += glfwGetTime() - pauseStartTime;
     }
 }
 ```
