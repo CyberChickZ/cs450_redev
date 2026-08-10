@@ -8,7 +8,7 @@ At its heart, OpenGL is a *specification*. As we learned in our [Graphics Histor
 
 That sounds very technical, but it really is just a fancy way of laying out the rules for how different platforms, which wish to support OpenGL, must design the "hooks" programmers will use to generate scenes on a computer screen. In other words, it defines a common language the programmers will use to talk about the things OpenGL can do.
 
-This means, that no matter if you are writing your application for Windows or Mac, using C++ or Java, the call used to draw a vertex array will always be **glDrawArrays(...)**. It also specifies the data types and how they are formatted. In this way, anyone can create an OpenGL implementation for any platform or programming language, as long as they follow the specification.
+This means, that no matter if you are writing your application for Windows or Mac, using C++ or Java, the call used to draw a vertex array will always be `glDrawArrays(...)`. It also specifies the data types and how they are formatted. In this way, anyone can create an OpenGL implementation for any platform or programming language, as long as they follow the specification.
 
 # OpenGL In This Course
 

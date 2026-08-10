@@ -240,7 +240,7 @@ Go ahead and build the solution (F7) and then run it (Ctrl-F5). You should now s
 
 ![Window with a single blue pixel](../images/week_2/tiny_spec.png)
 
-You know what? This minuscule dot doesn't do our efforts justice. Let's really make it stand out! Go back into our `display()` function and add the following code before `glDrawArrays(...)`: `glPointSize(30.0f);`.
+You know what? This minuscule dot doesn't do our efforts' justice. Let's really make it stand out! Go back into our `display()` function and add the following code before `glDrawArrays(...)`: `glPointSize(30.0f);`.
 
 Now rebuild (F7) and rerun (Ctrl-F5) to see what this small change does. It should look like this:
 
@@ -271,7 +271,7 @@ Feel free to use this as a very loose checklist when setting out to write your o
 
 # Looking Forward
 
-Believe it or not, we really have learned a lot. Yes, I know you are thinking, "It is just a pixel! I want to render complex scenes not just a single engorged pixel!", but it is very important to understand the nuts and bolts well before moving on. 
+Believe it or not, we really have learned a lot. Yes, I know you are thinking, "It is just a pixel! I want to render complex scenes not just a single engorged pixel!", but it is very important to understand the nuts and bolts well before moving on.
 
 In the coming explorations, we will learn:
 

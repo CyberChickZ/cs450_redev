@@ -1,4 +1,5 @@
 # CLOs
+
 * CLO1 - Explain the different coordinate systems used in computer graphics
 
 # Introduction
@@ -20,7 +21,7 @@ Below you will see two pictures of my hands. Please ignore any cuticle issues an
 ![Left hand with thumb extended to the right, the index finger extended up, and the middle finger pointing away from the camera. Each finger is part of an axis labeled X, Y, and Z respectively](../images/week_2/left_handed.jpg)  
 <figcaption>Left-handed configuration</figcaption>  
 
-![Right hand with the thum extended to the right, the index finger extened up, and the middle finger pointing toward the camera. Each finger is part of an axis labeled X, Y, and Z respectively](../images/week_2/right_handed.jpg)  
+![Right hand with the thum extended to the right, the index finger extended up, and the middle finger pointing toward the camera. Each finger is part of an axis labeled X, Y, and Z respectively](../images/week_2/right_handed.jpg)  
 <figcaption>Right-handed configuration</figcaption>  
 
 So, when you come across a random coordinate configuration in the wild, you will need to use your hands to identify if it is left-handed or right-handed. To do this, pick one of your hands and try to align the three axis as described above. If you can't without breaking something, then try the other one.
@@ -29,8 +30,7 @@ See if you can identify the handedness of the following set of axis. I am not gi
 
 ![3D axis without labels. One axis points up, one to the right, and one away from the viewer](../images/week_2/mystery_configuration.png)  
 
-**Find a way to hide the answer**
-If you picked "Left-Handed" you would be correct!
+**Find a way to hide the answer: If you picked "Left-Handed" you would be correct!**
 
 # Configuration depends on the system used
 

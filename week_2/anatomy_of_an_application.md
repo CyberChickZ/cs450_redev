@@ -1,4 +1,5 @@
 # CLOs
+
 * CLO 5 - Explain the elements of a computer graphics framebuffer.
 
 # Introduction
@@ -46,7 +47,8 @@ The next important line is where we create our window: `GLFWwindow* window = glf
 
 We create a pointer to a `GLFWwindow` object and name it `window`. We then call `glfwCreateWindow` to create our window object.
 
-**NOTA BENE**[^1]: We are going to go over all of these parameters here, but if you ever find yourself forgetting what they are or in what order you should define them, you should go to  read the official documentation[^2] (or just Google the function name if you know it). Going to the source will save you time hunting through all the Canvas explorations looking for the needed information.
+**NOTA BENE**[^1]: We are going to go over all of these parameters here, but if you ever find yourself forgetting what they are or in what order you should define them, you should go to read the official documentation[^2] (or just Google the function name if you know it). Going to the source will save you time hunting through all the Canvas explorations looking for the needed information.
+
 |Parameter Name | Value | Type | Purpose |
 |----|----|----|----|
 |width|800|int|width of the window (shocker!)|
@@ -64,6 +66,7 @@ Why is this need you may ask. Well, not all the features of OpenGL are supported
 So, before creating our window, we want to add "hints". For this course, we want to target OpenGL 4.1. We are going to use this version because it is the last version supported by macOS, and we won't be actually writing any *Compute Shaders*, which were introduced in 4.3.
 
 We will need to set both the *major version* (the number before the decimal) and the *minor version* (the number after the decimal). Furthermore, we do that with the following two function calls *before* creating our window.
+
 * `glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);`
 * `glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);`
 
@@ -75,6 +78,7 @@ We also need to specify that we are using the "core" profile of Version 4.1. Thi
 If for some reason the system we are trying to run this code doesn't support OpenGL 4.1, our window creation will fail. We would then need to investigate which version of OpenGL currently was available and update if necessary/possible.
 
 We now need to tell GLFW what our current *context* is. The context is just the current state of OpenGL we wish to use. To set the context, we will use our `window` pointer.
+
 * `glfwMakeContextCurrent(window);`
 
 After this statement, you will see `glewExperimental = GL_TRUE;` This needs to be done after we set our context in the previous function call. This tells GLEW (the OpenGL Extension Wrapper) to ensure all the necessary OpenGL extensions (including things like the Core Profile) are loaded. This can be very important if you are writing code to target macOS.
@@ -117,7 +121,7 @@ Don't believe me? Take your phone and zoom in on your screen to see that each pi
 
 We won't go into detail on the science behind additive color, because we only need to know that we need to use RGB color for our work in this course.
 
-Now, some of you may already be familiar with RGB colors. You likely have seen RGB colors formatted as either a series of three numbers ranged from 0-255 (ordered Red, Green, and then Blue). For example, (215, 63, 9) represents Beaver Orange. We can also represent this as a HEX number: #D73F09. 
+Now, some of you may already be familiar with RGB colors. You likely have seen RGB colors formatted as either a series of three numbers ranged from 0-255 (ordered Red, Green, and then Blue). For example, (215, 63, 9) represents Beaver Orange. We can also represent this as a HEX number: #D73F09.
 
 In the code we have `glClearColor(0.84f, 0.25f, 0.03f, 1.0f)`, which represents Beaver Orange. But, wait! That doesn't look anything like either RGB or HEX color codes we just went over!
 
@@ -137,7 +141,7 @@ Under the `display()` function call, we have `glfwSwapBuffers(window);`. OpenGL 
 
 **Hide Answer: What do you think would happen if OpenGL only used one buffer and wrote into it while also displaying it to the user? Well, we would end up with having some wild situations where part of the screen is being overwritten while part of the screen shows the last rendering pass. This would cause tearing and would make it very difficult for the viewer. So, the back buffer is only swapped once it is fully rendered and ready to be viewed.**
 
-The last element in `main()` is `glfwPollEvents()`. This is how we are going to monitor input from the user. Astute students may realize that our `main()` loop executes once for each frame rendered. We want to collect and then process any input the user has made since the last frame was generated. GLFW maintains an *event queue* and `glfwPollEvents()` pulls all the events that haven't been processed for processing. 
+The last element in `main()` is `glfwPollEvents()`. This is how we are going to monitor input from the user. Astute students may realize that our `main()` loop executes once for each frame rendered. We want to collect and then process any input the user has made since the last frame was generated. GLFW maintains an *event queue* and `glfwPollEvents()` pulls all the events that haven't been processed for processing.
 
 In our sample code, we don't do this manually, but GLFW has some default behavior built in, like closing the window if the "X" is clicked. This event would cause our `while` loop to terminate. We will be going into input processing more later in the course.
 

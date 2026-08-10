@@ -1,7 +1,9 @@
 # Introduction
-Now that we have gone over the history computer graphics, it is time to get our hands dirty! Before we can put pixels to screen, we need to ensure our development environment is setup correctly. There are lots of ways of using OpenGL: C++, Python, and Java. In this course, we are going to focus on writing applications in C++.
+
+Now that we have gone over the history computer graphics, it is time to get our hands dirty! Before we can put pixels to screen, we need to ensure our development environment is set up correctly. There are lots of ways of using OpenGL: C++, Python, and Java. In this course, we are going to focus on writing applications in C++.
 
 We will be using the following tech stack:
+
 * Visual Studio
 * GLFW (Graphics Library Framework)
 * GLEW (OpenGL Extension Wrangler Library)
@@ -94,11 +96,13 @@ In the GL folder, create a new directory and call it "OpenGL_Template". In this 
 Find the glew32.dll file located in GL>GLEW>bin>Release>x64 folder and copy it into our new template directory.
 
 In the "lib" folder we need to copy and paste the following files:
+
 * glew32.lib - found in GL>GLEW>lib>Release>x64
 * glfw3.lib - found in GL>GLFW>lib-vc2022
 * soil2-debug.lib - found in GL>SOIL2>lib>windows
 
 In the "include" folder we need to copy the following *directories* (not just the files). When we are done, we will have four directories in the "include" folder: "GL", "GLFW", "glm", and "SOIL2".
+
 * GL>GLEW>include>GL
 * GL>GLFW>include>GLFW
 * GL>GLM>glm
@@ -134,6 +138,7 @@ GL/
             ├── SOIL2.c
             ├── SOIL2.h
             └── etc...
+
 ## Setting up the Template
 
 Open up Visual Studio and create a new project. When prompted, select "Empty Project" and hit "Next." Name the project "OpenGL Template" and click "create."
@@ -149,6 +154,7 @@ Click the "New Line" button (folder icon with a starburst). You will now see an 
 Now, click "Linker" on the left and then "General." Find the "Additional Library Directories" row and click on it. Using the same steps we just went through, add the "lib" folder we created above.
 
 Also under "Linker", click "Input" and then "Additional Dependencies". Click through to edit the row. This time we are just going to type in the dependencies (one on each line) and hit "OK":
+
 * glfw3.lib
 * glew32.lib
 * soil2-debug.lib
@@ -170,9 +176,9 @@ Now, when we create a new project in Visual Studio, we will see an option to sel
 
 I am just kidding, we are going to test to ensure everything is working correctly.
 
-Go ahead and open up Visual Studio and create a new project. When asked, select our brand new *OpenGL Template*. You can choose to name this whatever you like and save it whereever you like, but I went with "Test Project" and saved it into the directory I am using for the course work ("CS450").
+Go ahead and open up Visual Studio and create a new project. When asked, select our brand new *OpenGL Template*. You can choose to name this whatever you like and save it wherever you like, but I went with "Test Project" and saved it into the directory I am using for the course work ("CS450").
 
-When the solution loads, we need to add something to build and run. We are going to use [test_install.cpp](../downloadable_files/test_install.cpp). We are providing this file simply as an easy way to verify all the files are where they should be and you have correctly set up your template. Download this file so you can add it to the project.
+When the solution loads, we need to add something to build and run. We are going to use [test_install.cpp](../downloadable_files/test_install.cpp). We are providing this file simply as an easy way to verify all the files are where they should be, and you have correctly set up your template. Download this file so you can add it to the project.
 
 To add it to the project, right click on "Source Files" in the right-hand *Solution Explorer*. Select "Add" and then "Existing Item". Navigate to where you downloaded the file, and click "Add". The file will now appear in the Solution Explorer. Go ahead and right click it so it opens up. You can look through the code, but honestly, we will be covering writing your own OpenGL file later.
 
@@ -180,11 +186,12 @@ At the top of the screen, click "Build" and then "Build Solution" or simply hit 
 
 Once the solution is built, we want to run it. To do this we can hit "Ctrl-F5" or click "Debug" and then "Start Without Debugging". This should bring up two windows. The top window should be "OpenGL Test" and it should have a lovely shade of Beaver Orange. The other window should be a terminal and it should display:
 
-```
+```C++
 GLM vector: 1
 SOIL2 image loaded: 512x512
 ```
-If you see anything else, that means there is a problem. Any failures should have a message to highlight which part isn't working. Again, if you need help figuring it out, reach out and we would be happy to assist you.
+
+If you see anything else, that means there is a problem. Any failures should have a message to highlight which part isn't working. Again, if you need help figuring it out, reach out, and we would be happy to assist you.
 
 # Conclusion
 

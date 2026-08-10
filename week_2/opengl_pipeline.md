@@ -1,5 +1,6 @@
 # CLOs
-* CLO 2 - Describe the names and functions of the elements of the graphics pipeline, as well as the input and output of each stage.
+
+* CLO2 - Describe the names and functions of the elements of the graphics pipeline, as well as the input and output of each stage.
 
 # Introduction
 
@@ -91,9 +92,9 @@ For our little example the lighting color has already been applied and there are
 
 ## Pixel Operations
 
-During this phase, OpenGL performs the final steps to push pixels to the screen. *Pixel Operations* does many things, but for now we want to focus on *Hidden Surface Removal* (HSR). This is where the fragment depth comes into play. 
+During this phase, OpenGL performs the final steps to push pixels to the screen. *Pixel Operations* does many things, but for now we want to focus on *Hidden Surface Removal* (HSR). This is where the fragment depth comes into play.
 
-As pixel colors come out of the Fragment Shader, OpenGL attempts to place them in the corresponding slot in the Frame Buffer. As pixels are drawn into the *Frame Buffer*, a *depth* value for that pixel is loaded in to the *Depth Buffer*. If a new pixel is generated for the same slot, OpenGL will only keep the one closest to the camera (if z-culling is enabled). By comparing the new pixel's depth value to that in the *Depth Buffer*, OpenGL is able to determine which one is closer to the camera. If any changes must be made, then both the *Frame Buffer* and *Z-Buffer* are updated before the next fragment is processed. 
+As pixel colors come out of the Fragment Shader, OpenGL attempts to place them in the corresponding slot in the Frame Buffer. As pixels are drawn into the *Frame Buffer*, a *depth* value for that pixel is loaded in to the *Depth Buffer*. If a new pixel is generated for the same slot, OpenGL will only keep the one closest to the camera (if z-culling is enabled). By comparing the new pixel's depth value to that in the *Depth Buffer*, OpenGL is able to determine which one is closer to the camera. If any changes must be made, then both the *Frame Buffer* and *Z-Buffer* are updated before the next fragment is processed.
 
 As mentioned above, some GPUs perform z-culling *before* this stage, and it is handled by the hardware itself to discard multiple fragments at once if they are completely obscured. This happens after rasterization before any fragments are sent to the Fragment Shaders. This "Early Depth Test" is an optimization as it reduces greatly the amount of cycles wasted running shaders on fragments that will never be seen.
 
