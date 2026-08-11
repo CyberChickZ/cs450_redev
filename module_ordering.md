@@ -65,3 +65,5 @@
 * EBOs
 * Cubemaps?
 * Culling?
+* Instancing
+* Interleaving vertex data

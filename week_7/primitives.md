@@ -1,4 +1,5 @@
 # CLOs
+
 * CLO 2 - Describe the names and functions of the elements of the graphics pipeline, as well as the input and output of each stage.
 
 # Introduction
@@ -61,7 +62,7 @@ This primitive is very useful for creating polygonal shapes or outlines of objec
 
 ## Triangle Primitives
 
-In many ways, *triangles* are the workhorse of any graphics rendering system. While you may hear of some systems using "quads", remember, each quad can be broken up into two triangles. In fact, many 3D art tools will convert the quads used in the editors to triangles when exporting for use when rendering.
+In many ways, *triangles* are the workhorse of any graphics rendering system. While you may hear of some systems using "quads", remember, each quad can be broken up into two triangles. In fact, many 3D art tools will convert the quads used in the editors to triangles when exporting for use when rendering (or the application splits them)
 
 One reason triangles are preferred for rendering, is that, by definition, they must be *planar*. This means that no matter where in 3D space the three vertices are, it is possible to draw a flat surface that all intersect with. This is not true with quads. Additionally, with triangle meshes[^4], we don't have to worry about the issue of having concave polygons, which cause issues with oh so many things: rendering, collision detection, and pathfinding (to name a few).
 
@@ -75,11 +76,11 @@ You wouldn't want to create a mesh using `GL_TRIANGLES`, but they are still very
 
 ### GL_TRIANGLE_STRIP
 
-This is likely going to be your go-to when it comes to rendering meshes. `GL_TRIANGLE_STRIP` creates a continuous series of connected triangles automatically (shown below). You could recreate this behavior using `GL_TRIANGLES`, but you would have to pass in vertices multiple times, which isn't efficient.
+`GL_TRIANGLE_STRIP` creates a continuous series of connected triangles automatically (shown below). You could recreate this behavior using `GL_TRIANGLES`, but you would have to pass in vertices multiple times, which isn't efficient.
 
 ![GL_TRIANGLE_STRIP demonstration. v0, v1, and v2 form a triangle. v1, v2, and v3 form a triangle. v2, v3, and v4 form a triangle. v3, v4, and v5 form a triangle](../images/undesignated_images/gl_triangle_strip.svg)
 
-As mentioned above, this primitive is very useful for rendering meshes. This includes objects, but also terrain and cloth.
+As mentioned above, this primitive is very useful for rendering meshes that are continuous. Object files don't typically use this because the faces aren't often stored in a way that has triangles arranged in a strip. That said, terrain and cloth are often structured this way, so `GL_TRIANGLE_STRIP` is used.
 
 ### GL_TRIANGLE_FAN
 
@@ -101,15 +102,15 @@ There actually *more* primitives available for OpenGL, but they each require eit
 
 The first four are used with Geometry Shaders, and behave similarly to the non-adjacency versions. The big difference is that the *lines* or *triangles* also have access to nearby vertices. This is necessary for the Geometry Shader to alter the vertices and still keep everything connected.
 
-The last one is used exclusively by Tessellation Shaders. Basically, instead of sending in a fully fleshed out mesh, we send in a *patch* that contains just enough vertices to allow the GPU to subdivide into the desired level of detail. For example, imagine sending in just four vertices to describe the outline of a body of water and having the tessellation shader "fill in" the parts inbetween. This reduces greatly the number of vertices your meshes need to hold.
+The last one is used exclusively by Tessellation Shaders. Basically, instead of sending in a fully fleshed out mesh, we send in a *patch* that contains just enough vertices to allow the GPU to subdivide into the desired level of detail. For example, imagine sending in just four vertices to describe the outline of a body of water and having the tessellation shader "fill in" the parts in-between. This reduces greatly the number of vertices your meshes need to hold.
 
 # Wrapping it up
 
-Make sure you know these primitives well. You will need to use at least one of them each time you call a draw function. Which one you will want to use will depend on the specific task you are attempting to accomplish. When working on your projects in this course, I highly recommend you experiment by swapping out one primitive for another to see how the scene changes.
-
+Make sure you know these primitives well. You will need to use at least one of them each time you call a draw function. Which one you will want to use will depend on the specific task you are attempting to accomplish. When working on your projects in this course, I highly recommend you experiment by swapping out one primitive for another to see how the scene changes.[^6]
 
 [^1]: There are in fact *twelve* primitives total. The four not listed are used exclusively with Geometry Shaders, which won't be used in this course.
 [^2]: [Particle Systems](https://opengl-notes.readthedocs.io/en/latest/topics/particles-mapping/particles.html)
 [^3]: [Vector Field](https://en.wikipedia.org/wiki/Vector_field)
 [^4]: [Polygon Mesh](https://en.wikipedia.org/wiki/Polygon_mesh)
-[^5]: Creating a 2D object that is always facing the camera, thus giving the impression of it being 3D. 
+[^5]: Creating a 2D object that is always facing the camera, thus giving the impression of it being 3D.
+[^6]: Most will fail horribly, but that is half the fun!

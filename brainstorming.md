@@ -54,46 +54,38 @@
 * Simple Animation
 
 # Week 3
+
 * Loading Data (VBOs and VAOs)
 * Provide "buildProgram" function that loads shaders
 
 # Pages that are needed
+
 * GLSL Errors
-* Animation
-* Go over Layouts
+
 * Talk about wireframe rendering (glPolygonModel)
-* Camera Control
-* Interpolation
+
+
 
 # Module Ideas
+
 * How to label points (ccw)
-* Color in OpenGL
-  * Additive Color
+
 * Hardware vs Software vs GPU Graphics
-* Mouse controls
-  * Aim the camera
-  * Selecting things in the world (Week 9?)
-* Lighting/Shading
-  * Flat
-  * Gouraud (per vertex)
-  * Phong (per fragment)
-* Rasterization
+
+
 * Detecting Errors
 * Animations
-* Write a Object loading function and provide students
 
-* To Do
-  * Assign CLOs to each exploration/assignment
-  * Add tinyobjloader to the Setup (and test file?)
+
+
 
 * Quiz Questions
   * Which stages are programmable?
 
 * Possible Advanced topics
-  * UBOs
+
   * EBOs
   * Instancing
-  * M+VP
   * Interleaving vertex data
 
 
