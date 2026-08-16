@@ -1,9 +1,9 @@
-# Tool Setup — macOS
-
 <div align="right">
   <a href="tool_setup.md"><img src="https://img.shields.io/badge/Windows-0078D4?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0wIDMuNDVMOS43NSAyLjF2OS40NUgwem0xMC45NS0xLjVMMjQgMHYxMS41NUgxMC45NXpNMCAxMi40NWg5Ljc1djkuNDVMMCAyMC41NXptMTAuOTUgMEgyNFYyNGwtMTMuMDUtMS45eiIvPjwvc3ZnPg==" alt="Windows setup"></a>
   <a href="mac_tool_setup.md"><img src="https://img.shields.io/badge/macOS-000000?logo=apple" alt="macOS setup (this page)"></a>
 </div>
+
+# Tool Setup — macOS
 
 ## VS Code
 
