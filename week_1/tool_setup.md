@@ -1,3 +1,8 @@
+<div align="right">
+  <a href="tool_setup.md"><img src="https://img.shields.io/badge/Windows-0078D4?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0wIDMuNDVMOS43NSAyLjF2OS40NUgwem0xMC45NS0xLjVMMjQgMHYxMS41NUgxMC45NXpNMCAxMi40NWg5Ljc1djkuNDVMMCAyMC41NXptMTAuOTUgMEgyNFYyNGwtMTMuMDUtMS45eiIvPjwvc3ZnPg==" alt="Windows setup (this page)"></a>
+  <a href="mac_tool_setup.md"><img src="https://img.shields.io/badge/macOS-000000?logo=apple" alt="macOS setup"></a>
+</div>
+
 # Introduction
 
 Now that we have gone over the history computer graphics, it is time to get our hands dirty! Before we can put pixels to screen, we need to ensure our development environment is set up correctly. There are lots of ways of using OpenGL: C++, Python, and Java. In this course, we are going to focus on writing applications in C++.
@@ -110,6 +115,7 @@ In the "include" folder we need to copy the following *directories* (not just th
 
 When you are done, you should have a file structure like this:
 
+```
 GL/
 ├── GLEW
 ├── GLFW
@@ -138,6 +144,7 @@ GL/
             ├── SOIL2.c
             ├── SOIL2.h
             └── etc...
+```
 
 ## Setting up the Template
 
@@ -179,6 +186,8 @@ I am just kidding, we are going to test to ensure everything is working correctl
 Go ahead and open up Visual Studio and create a new project. When asked, select our brand new *OpenGL Template*. You can choose to name this whatever you like and save it wherever you like, but I went with "Test Project" and saved it into the directory I am using for the course work ("CS450").
 
 When the solution loads, we need to add something to build and run. We are going to use [test_install.cpp](../downloadable_files/test_install.cpp). We are providing this file simply as an easy way to verify all the files are where they should be, and you have correctly set up your template. Download this file so you can add it to the project.
+
+Note: `test_install.cpp` loads an image from `C:\GL\SOIL2\bin\img_mars.jpg`, which may not exist on your machine. If it doesn't, change that path in `SOIL_load_image(...)` to any image on your computer.
 
 To add it to the project, right click on "Source Files" in the right-hand *Solution Explorer*. Select "Add" and then "Existing Item". Navigate to where you downloaded the file, and click "Add". The file will now appear in the Solution Explorer. Go ahead and right click it so it opens up. You can look through the code, but honestly, we will be covering writing your own OpenGL file later.
 
