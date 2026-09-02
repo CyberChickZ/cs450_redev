@@ -185,7 +185,7 @@ I am just kidding, we are going to test to ensure everything is working correctl
 
 Go ahead and open up Visual Studio and create a new project. When asked, select our brand new *OpenGL Template*. You can choose to name this whatever you like and save it wherever you like, but I went with "Test Project" and saved it into the directory I am using for the course work ("CS450").
 
-When the solution loads, we need to add something to build and run. We are going to use [test_install.cpp](../downloadable_files/test_install.cpp). We are providing this file simply as an easy way to verify all the files are where they should be, and you have correctly set up your template. Download this file so you can add it to the project.
+When the solution loads, we need to add something to build and run. We are going to use [test_install.cpp](../downloadable_files/week_1/test_install.cpp). We are providing this file simply as an easy way to verify all the files are where they should be, and you have correctly set up your template. Download this file so you can add it to the project.
 
 Note: `test_install.cpp` loads an image from `C:\GL\SOIL2\bin\img_mars.jpg`, which may not exist on your machine. If it doesn't, change that path in `SOIL_load_image(...)` to any image on your computer.
 
