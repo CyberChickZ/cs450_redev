@@ -11,15 +11,15 @@ So, everyone ready? We are about to take a shallow dive into **The Math of 3D Gr
 
 # 3D Graphics Math (it won't be *that* bad)
 
-What you are about to see is basically *Linear Algebra*[^1] If you have taken a course in the subject, then YAY for you! If you haven't taken such a class, or are like me and took it *decades* ago, don't worry, things will be OK!
+What you are about to see is basically *Linear Algebra*.[^1] If you have taken a course in the subject, then YAY for you! If you haven't taken such a class, or are like me and took it *decades* ago, don't worry, things will be OK!
 
 # Points
 
-This is likely the easiest concept to grasp, so it's a good place to start! A *point* is just that: *a point in space*. You have surely plotted countless points across your academic career. They show up when graphing equations on you calculator. They show up when plotting data on a graph for a presentation.
+This is likely the easiest concept to grasp, so it's a good place to start! A *point* is just that: *a point in space*. You have surely plotted countless points across your academic career. They show up when graphing equations on your calculator. They show up when plotting data on a graph for a presentation.
 
-Most of these points are presented in a *2-D plane*. This means, they have both an *X* and a *Y* coordinate. These two coordinates allow us to describe a point's position on the X and Y-axis. As we mentioned in our [Coordinate Systems](./coordinate_systems.md) exploration, we need to expand our axis to include a *Z*.
+Most of these points are presented in a *2-D plane*. This means, they have both an *X* and a *Y* coordinate. These two coordinates allow us to describe a point's position on the X and Y-axis. As we mentioned in our [Coordinate Systems](../week_2/coordinate_systems.md) exploration, we need to expand our axis to include a *Z*.
 
-This means that *any* vertex we want to place in our scene requires an *X*, *Y*, an *Z* coordinates. Given this information, what *type* do you think we should use: `vec3` or `vec4`?
+This means that *any* vertex we want to place in our scene requires *X*, *Y*, and *Z* coordinates. Given this information, what *type* do you think we should use: `vec3` or `vec4`?
 
 **HIDE ANSWER: If you guessed `vec3` you are making the purely logical choice. Sadly, you are incorrect in the context of 3D Graphics Math. We actually want a `vec4`**
 
@@ -35,7 +35,7 @@ OK, so we now know how to create a `vec4` to hold our *homogeneous coordinates*,
 
 # Matrices
 
-Did you all see the segue? Masterful! Anyway, a *matrix* is basically a series of number organized into rows and columns. Behold! *A Matrix!*
+Did you all see the segue? Masterful! Anyway, a *matrix* is basically a series of numbers organized into rows and columns. Behold! *A Matrix!*
 
 $$
 \begin{bmatrix}
@@ -107,7 +107,7 @@ A_{30} & A_{31} & A_{32} & A_{33}
 \end{bmatrix}^T
 $$
 
-So, what do we need to transpose a matrix? 
+So, why do we need to transpose a matrix? 
 
 When we move, rotate, or scale our models using a transformation matrix, it works great for vertices (points). However, it can distort our *normal vectors* — the arrows that point perpendicular to a surface and are critical for lighting (covered much later in the course). To correctly transform normals, we multiply them by the *inverse transpose* of the transformation matrix. This keeps them pointing in the right direction.
 
@@ -144,7 +144,7 @@ m & n & o & p
 \end{bmatrix}
 $$
 
-Adding two matrices together in with GLM and in GLSL is trivial; we use the `+` operator.
+Adding two matrices together with GLM and in GLSL is trivial; we use the `+` operator.
 
 ```C++
 glm::mat4 result = matA + matB; // GLM matrix addition
@@ -204,7 +204,7 @@ Z \\
 \end{pmatrix}
 $$
 
-Remember that the number of rows in the first matrix has to match the number of columns in the second matrix? Are you thinking, "But the first matrix has 4 rows and the second matrix has only one column?" Let me remind you that in our context, we are going to be performing these operations from *right-to-left*. Therefore, our single column matrix is the *first* matrix and the 4x4 matrix is the *second* matrix.
+Remember that the number of *columns* in the first matrix has to match the number of *rows* in the second matrix? Here the 4x4 matrix has 4 columns and our point has 4 rows, so we are good. The result is a 4x1 matrix (a point), because the first matrix has 4 rows and the second has 1 column.
 
 Question Time: Did you notice that the second example uses `()` around the single column matrix and the resultant matrix? Why do you think that is?
 
@@ -232,7 +232,7 @@ glm::inverse(matA); // GLM inverse generation
 inverse(matA); // GLSL inverse generation
 ```
 
-We will not be needing the inverse to often, but, as mentioned above, we absolutely need it when we need the *inverse transpose* to help correct our *normals*. We will also need to use it to move between *World Space* and *Local Space* (more details coming shortly). It can also be used to "undo" a transform that we applied and restore the original state to a vertex.
+We will not be needing the inverse too often, but, as mentioned above, we absolutely need it when we need the *inverse transpose* to help correct our *normals*. We will also need to use it to move between *World Space* and *Local Space* (more details coming shortly). It can also be used to "undo" a transform that we applied and restore the original state to a vertex.
 
 
 ## Transformations
@@ -274,10 +274,10 @@ Don't let the matrix math worry you, GLM offers a built-in function to make tran
 // Generate Identity Matrix
 glm::mat4 model = glm::mat4(1.0f);  
 // Apply the (x, y, z) translation to the model matrix
-model = glm::translate(model, vec3(x, y, z));  
+model = glm::translate(model, glm::vec3(x, y, z));  
 ```
 
-You have to pass in a `mat4` as the first parameter for all these translations. In this example, we use the name "model" for our matrix because we are going to be using a series of transforms to place our *model* into our scene. If it is the first transform we wish to apply, we have to start somewhere, so we use our *Do-Nothing Matrix*.
+You have to pass in a `mat4` as the first parameter for all these transforms. In this example, we use the name "model" for our matrix because we are going to be using a series of transforms to place our *model* into our scene. If it is the first transform we wish to apply, we have to start somewhere, so we use our *Do-Nothing Matrix*.
 
 You also need to pass in the `x, y, and z` values as a `vec3`. This will apply to all GLM transform functions.
 
@@ -323,11 +323,11 @@ Just as before with `glm::translate(...)`, we can use the resultant `model` matr
 
 ### Rotation
 
-Now it is time for our final transform: *Rotation*. We will use this when we want to *rotate* an object around a specified axis
+Now it is time for our final transform: *Rotation*. We will use this when we want to *rotate* an object around a specified axis.
 
-The math for rotations is a bit tricky. Luckily, a gentleman named Leonhard Euler came up with a clever way of rotating around a specified axis in 3D dimensional space. He discovered that if you break up the rotation into three separate rotation around the X, Y, and Z axis individually, you could combine them into a single matrix that contains all three! We call these *Euler Angles*.[^5]
+The math for rotations is a bit tricky. Luckily, a gentleman named Leonhard Euler came up with a clever way of rotating around a specified axis in 3D dimensional space. He discovered that if you break up the rotation into three separate rotations around the X, Y, and Z axes individually (and change 'in 3D dimensional space' to 'in 3D space'), you could combine them into a single matrix that contains all three! We call these *Euler Angles*.[^5]
 
-To use Euler Angles, we just need to specify how much we want to rotate (in *radians*) and provide an axis to rotate around. By imagining our axis passing through the origin, we can use a simple vector to describe our axis: (x, y, z). Now we just do the math (shown) below to calculate how much to move each vertex in each dimension to produce the desired rotation.
+`glm::rotate(...)` uses a closely related *axis-angle* representation: we specify how much we want to rotate (in *radians*) and an axis to rotate around. Rotating about one of the X, Y, or Z axes gives the three Euler-angle matrices below. By imagining our axis passing through the origin, we can use a simple vector to describe our axis: (x, y, z). Now we just do the math (shown) below to calculate how much to move each vertex in each dimension to produce the desired rotation.
 
 **Rotation around X by θ:**
 
@@ -403,7 +403,7 @@ float theta = 45.0f;
 model = glm::rotate(model, glm::radians(theta), glm::vec3(x, y, z));
 ```
 
-Just as before, we can use the resultant `model` matrix to scale our vertices: `mat4 * vec4`.
+Just as before, we can use the resultant `model` matrix to rotate our vertices: `mat4 * vec4`.
 
 WARNING: Euler Angles are *awesome*, but they are not perfect. There are some very specific conditions that can arise while using Euler Angles that result in something called *Gimbal Lock*.[^6] This is a very troubling issue that can be solved by using something called *Quaternions*, but for our purposes we can usually be safe using Euler Angles, so we aren't going to over complicate things.
 
@@ -421,7 +421,7 @@ So, what are we to do? Take a guess given *all the context clues* I have provide
 
 **HIDE ANSWER: That's right! We need to:**
 
-* move our object to to be centered at the origin
+* move our object to be centered at the origin
 * apply our rotation
 * return the object to its original position
 
@@ -448,7 +448,7 @@ So, working backwards:
 2. Now that the object is centered on the origin it is safe to rotate around the axis we defined.
 3. Then, all we have to do is translate the object back to its original position: `pos`.
 
-After all of this, we are left with `model`, which contains not one, not two, but *three* transforms! We precompile this transform matrix once and then apply it over and over again to *all* the vertices in the object on the GPU. This is much more efficient than applying each transform to all the vertices before applying the next.
+After all of this, we are left with `model`, which contains not one, not two, but *three* transforms! We precompute this transform matrix once and then apply it over and over again to *all* the vertices in the object on the GPU. This is much more efficient than applying each transform to all the vertices before applying the next.
 
 You will come across some other fairly common transform "patterns," but the sky is the limit when it comes to how we decide to chain transforms together.
 
@@ -456,7 +456,7 @@ You will come across some other fairly common transform "patterns," but the sky 
 
 We are now going to be moving away from matrices and onto *vectors*. You have likely seen these in your academic career, but just in case, let's define the term. In mathematics, a *vector* is defined by both a *magnitude* (think length or distance) and *direction* (think orientation). They are often represented as an arrow.
 
-There are several notations used to represent vectors, but we are going to stick with representing them as a tuple (e.g. `(x, y, z)`). You may be thinking, "I don't see either a magnitude *or* a direction!" We can get away with this notation because we are imagining all our vectors as beginning at the origin. So, we can do some quick math to find the *magnitude*: $$|v| = \sqrt{x^2+y^2+z^2}$$. Another benefit of assuming all vectors start at the origin is that our *direction* is just the tuple itself!
+There are several notations used to represent vectors, but we are going to stick with representing them as a tuple (e.g. `(x, y, z)`). You may be thinking, "I don't see either a magnitude *or* a direction!" We can get away with this notation because we are imagining all our vectors as beginning at the origin. So, we can do some quick math to find the *magnitude*: $|v| = \sqrt{x^2+y^2+z^2}$. Another benefit of assuming all vectors start at the origin is that our *direction* is just the tuple itself!
 
 Throughout this course, you will see us representing both vectors and points using `vec3` and `vec4`. We will need to rely on context to know what we are trying to represent. One benefit of using the same structure for both points and vectors, is that we can use our matrix transforms interchangeably.
 
@@ -510,7 +510,7 @@ normalize(vec3(1, 2, 4));  // GLSL Normalize function
 
 This next vector operation is going to be something we use frequently. Before we talk about its uses, let's discuss what it is.
 
-Given two vectors ($\mathbf{A}(u, v, w)$ and $\mathbf{B(x, y, z)}$), the *Dot Product* is calculated:
+Given two vectors ($\mathbf{A}(u, v, w)$ and $\mathbf{B}(x, y, z)$), the *Dot Product* is calculated:
 
 $$
 \mathbf{A} \cdot \mathbf{B} = ux + vy + wz
@@ -544,17 +544,17 @@ Notice, that the denominator on the right consists of $|\vec{V}| \cdot |\vec{W}|
 
 $$
 \begin{align*}
-cos(\theta) = \hat{V} \cdot \hat{W}
+\cos(\theta) = \hat{V} \cdot \hat{W}
 \\
-\theta = arcos (\hat{V} \cdot \hat{W})
+\theta = \arccos(\hat{V} \cdot \hat{W})
 \end{align*}
 $$
 
 The dot product can also be used for:
 
-* Finding a vector's magnitude: $\sqrt{\vec{V} \cdot \vec{W}}$
+* Finding a vector's magnitude: $|\vec{V}| = \sqrt{\vec{V} \cdot \vec{V}}$
 * Determining if two vectors are perpendicular: $\vec{V} \cdot \vec{W} = 0$
-* Determing if two vectors are parallel: $\vec{V} \cdot \vec{W} = |\vec{V}| * |\vec{W}|$
+* Determining if two vectors are parallel: $|\vec{V} \cdot \vec{W}| = |\vec{V}| \, |\vec{W}|$
 
 ### Cross Product
 
@@ -588,12 +588,12 @@ Be warned, while this is called a *normal*, it is not *normalized*. It is best p
 
 ```C++
 glm::vec3 normal = glm::cross(v, w);
-normal = glm::normalize(normal);   // or glm::normalize(glm::cross(u, v))
+normal = glm::normalize(normal);   // or glm::normalize(glm::cross(v, w))
 ```
 
 # Space Review
 
-Last week, we were introduced to the concept of *Space*. We defined the following:
+Back in Week 2, we were introduced to the concept of [*Space*](../week_2/coordinate_space.md). We defined the following:
 
 * Local/Model Space - coordinates of an object relative to its own origin
 * World Space - shared coordinate system of an entire scene. Each object is placed into this space before rendering
@@ -648,7 +648,7 @@ You may think that perspective is such a no-brainer, that it is always how human
 
 Notice how everything seems *flat*, especially the table. Also, notice how the Virgin Mary (with the book) is shown to be further away from the viewer by making her appear higher on the canvas, but she is still roughly the same size as all the other figures? There is *some* attempt at perspective in the bottom left corner in the depiction of the well. Yet, even that attempt doesn't match the garden walls.
 
-Now, let us look at a painting drawn with an eye for *prospective*. This is one of my favorite paintings from the Renaissance and was painted roughly 100 years after the previous painting.
+Now, let us look at a painting drawn with an eye for *perspective*. This is one of my favorite paintings from the Renaissance and was painted roughly 100 years after the previous painting.
 
 ![The School of Athens painted by Raphael between 1509-1511](../images/week_4/school_of_athens.jpg)
 
@@ -725,7 +725,7 @@ Whereas the *Perspective Projection* attempts to mimic a 3D scene, the *Orthogra
 
 It's a bit tricky to visualize how this works, so let's look at a diagram.
 
-<div align="center" markdown="1>
+<div align="center" markdown="1">
 
 ![Orthographic Projection Diagram](../images/week_4/ortho_projection.svg)
 
@@ -753,7 +753,7 @@ What else do you notice that is different about the diagram?
 
 This is likely still confusing, so let's look at the same scene rendered in *Orthographic Projection* and with *Perspective Projection*. Both of these show a 3D model my daughter made for a school project. The first image will use the *perspective projection*.
 
-<div align="center" markdown="1>
+<div align="center" markdown="1">
 
 ![Orthographic projection of a CAD model of a school](../images/week_4/perspective_building.png)
 
@@ -761,7 +761,7 @@ This is likely still confusing, so let's look at the same scene rendered in *Ort
 
 Nothing out of the ordinary here. The walls of the building appear to converge toward a point in the far distance. Things closer to the viewer appear larger. You get the gist! Now, let's look at the same model, but with the *orthographic projection*.
 
-<div align="center" markdown="1>
+<div align="center" markdown="1">
 
 ![Orthographic projection of a CAD model of a school](../images/week_4/ortho_building.png)
 
@@ -771,7 +771,7 @@ This seems like a silly thing to do and not *realistic*, but there are some soli
 
 There is another "common" use case for a view similar to the image above. I will give you a hint. Gamers of a certain type are likely very familiar with this "view."
 
-**Hide answer: If you are a Real-Time Strategy (RTS) or enjoy games like Diablo/Baldur's Gate you have probably heard of the term *Isometric View*. This is a special flavor of orthographic projection that angles the camera at the projection plane instead of being perpendicular.**
+**HIDE ANSWER: If you are a Real-Time Strategy (RTS) fan or enjoy games like Diablo/Baldur's Gate you have probably heard of the term *Isometric View*. This is a special flavor of orthographic projection where the camera is rotated so that all three world axes are viewed at the same angle.**
 
 That was fun, but now we have to look at the *math*. I am so sorry, but it will be quick! If you need to be reminded of what each variable is in the matrix below, just scroll up a bit.
 
@@ -787,9 +787,9 @@ $$
 \end{bmatrix}
 $$
 
-That's it! Now, *of course* we aren't going to do this by hand, we are going to lean on GLM. We will use `glm::ortho(left, right, bottom, top, near, far);
+That's it! Now, *of course* we aren't going to do this by hand, we are going to lean on GLM. We will use `glm::ortho(left, right, bottom, top, near, far)`.
 
-Using the following code, we would create *Projection Matrix* that is 600x480 and centered on the origin. By now, you should be able to figure out how it is doing that.
+Using the following code, we would create a *Projection Matrix* that is 600x480 and centered on the origin. By now, you should be able to figure out how it is doing that.
 
 ```C++
 float height = 480.0f;
@@ -817,7 +817,7 @@ The Model Matrix takes our vertices from local space to world space. By combinin
 Below you can see code examples of all three types of matrices being created. You may see online people creating all these matrices every frame. This is a *bad* idea. We want to not waste CPU time doing complicated math, so we want to get in the habit of creating them only when necessary.
 
 * A Model Matrix needs to be created for *every object* per frame
-* The View Matrix needs to be created *once* per frame (because the camera can move, but not between frames)
+* The View Matrix needs to be created *once* per frame (because the camera can move between frames, but not within a frame)
 * The Projection Matrix needs to be created *once* in `init()`, or after the user resizes the window.
 
 ```C++
@@ -862,18 +862,18 @@ Now that we know *how* and *when* to create each matrix, what do we *do* with th
     * Combining V with M for every object per every frame is unneeded. V can be calculated once per frame
 * Combine View and Projection and send Model separately (*M + VP*)
   * Pro:
-    * The camera and perspective don't change every frame, so combining VP is efficient
+    * The camera and projection change at most once per frame (never per object), so combining VP once per frame is efficient
     * Many algorithms (e.g. ray tracing) require *World Space*, which is contained in *M*
-    * Debugging scenes with *World Space* (*M*) is easier than with *Eyes Space* (*V*)
+    * Debugging scenes with *World Space* (*M*) is easier than with *Eye Space* (*V*)
   * Con:
     * Requires passing in the camera's position in order to calculate lighting
 
 Decisions, decisions, decisions... I will be honest with you. I *agonized* over which approach to use in this course. We will be going with *MV + P*. This means we will be combining our *Model* and *View* matrices on the CPU, but applying the *Projection* matrix in the shader.
 
-In the end, I picked the method that balances efficiency and approachability. The benefits of using *M + VP* don't really come into play until you are trying to push a graphics card to its limit, so doesn't make much sense to cover in an intro course. Additionally, most examples you will see in textbooks or online will utilize *MV + P*, so using it in this course will equip you to expand your learning going forward.
+In the end, I picked the method that balances efficiency and approachability. The benefits of using *M + VP* don't really come into play until you are trying to push a graphics card to its limit, so it doesn't make much sense to cover in an intro course. Additionally, most examples you will see in textbooks or online will utilize *MV + P*, so using it in this course will equip you to expand your learning going forward.
 
 [^1]: [Linear Algebra](https://www.merriam-webster.com/dictionary/linear%20algebra): a branch of mathematics that is concerned with mathematical structures closed under the operations of addition and scalar multiplication and that includes the theory of systems of linear equations, matrices, determinants, vector spaces, and linear transformations
-[^2]: Technically, it isn't any other point or matrix, but in our context the statement holds. To learn more about the *actual* operation of the Identiy Matrix see [here](https://www.khanacademy.org/math/algebra-home/alg-matrices/alg-properties-of-matrix-multiplication/a/intro-to-identity-matrices)
+[^2]: Technically, it isn't any other point or matrix, but in our context the statement holds. To learn more about the *actual* operation of the Identity Matrix see [here](https://www.khanacademy.org/math/algebra-home/alg-matrices/alg-properties-of-matrix-multiplication/a/intro-to-identity-matrices)
 [^3]: If you are more the "Screw Waiting" type, you can find the answer to why we need 4x4 matrices in the *Transforms* section under *Translation*.
 [^4]: The associative property basically means that grouping the factors doesn't change the result. For example: `5 * 4 * 2` results in the same thing as `5 * (4 * 2)` and `(5 * 4) * 2`.
 [^5]: Follow this [link](https://en.wikipedia.org/wiki/Euler_angles) for more information than you would ever need about Euler Angles.

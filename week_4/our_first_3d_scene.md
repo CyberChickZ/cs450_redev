@@ -6,7 +6,7 @@
 
 # Introduction
 
-Today is the day! The day you have all be waiting for! The day we *finally* put something 3D onto our screens. 
+Today is the day! The day you have all been waiting for! The day we *finally* put something 3D onto our screens. 
 
 I apologize for how long it has taken us to get here, but, as you have seen, OpenGL programming requires *a lot* of technical details to get up and running. Additionally, we couldn't display a 3D object without first learning about the *Model*, *View*, and, most importantly, *Projection* matrices. At this point in the course you have learned how to...
 
@@ -22,7 +22,7 @@ Now it is time to put *all* of these together in order to render a cube!
 
 # Where to start
 
-To make things easier, I want us to start with the code we created during our *Interpolation* exploration ([interpolation.cpp](../downloadable_files/interpolation.cpp)). We are going to be editing almost every function we have used up until this point. Therefore, if you are unsure about how some of the earlier pieces work, please go back to [Anatomy of an Application](../week_2/anatomy_of_an_application.md) and refresh your memory.
+To make things easier, I want us to start with the code we created during our *Interpolation* exploration ([interpolation.cpp](../downloadable_files/week_3/interpolation.cpp)). We are going to be editing almost every function we have used up until this point. Therefore, if you are unsure about how some of the earlier pieces work, please go back to [Anatomy of an Application](../week_2/anatomy_of_an_application.md) and refresh your memory.
 
 Go ahead and create a new project for this work and add the linked `.cpp` and rename it to something like `our_first_3d_scene.cpp`. To make your life easier, I am also supplying the shader code so we are all starting from the same point. Save these as `shader.vert` and `shader.frag`.
 
@@ -183,7 +183,7 @@ Yes, this is a silly way of storing this data, especially if we want to have mul
 
 Now that we have these updated, let's see what happens when we run the code! Spoiler: it won't display a cube. Seriously, run the code to see the results and try to noodle through *why* it is displaying what it is.
 
-**HIDE ANSWER: In our `glDrawArarys` call, we explicitly tell OpenGL to draw `3` vertices. In order to get it to draw our cube, we need tell it to draw `36`. Go ahead and make that change!**
+**HIDE ANSWER: In our `glDrawArrays` call, we explicitly tell OpenGL to draw `3` vertices. In order to get it to draw our cube, we need to tell it to draw `36`. Go ahead and make that change!**
 
 Now that you have told OpenGL to use 36 vertices, you should end up with:
 
@@ -197,15 +197,15 @@ Up until now, our objects have been placed into our scene using their own *Model
 
 To do that, we need to add a *translation* to our `model` object. Note, when using transforms we have to add a header file (`#include <glm/gtc/matrix_transform.hpp>`).
 
- Find where we define `mvp` as the *Identity Matrix*. Replace the code with the following:
+Find where we define `mvp` as the *Identity Matrix*. Replace the code with the following:
 
 ```C++
-glm::mat4 model = glm::mat4(1.0f); // Always start with the identiy matrix
+glm::mat4 model = glm::mat4(1.0f); // Always start with the identity matrix
 model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
 glm::mat4 mvp = model;
 ```
 
-To use `glm::translate` we need to pass it a model and a position vector. In this example, we are passing in our cube and telling OpenGL to push the entire object along the negative Z-axis by 3.0f.
+To use `glm::translate` we need to pass it a model and a position vector. In this example, we are passing in our model matrix and asking GLM to build a matrix that pushes the entire object along the negative Z-axis by 3.0f.
 
 Please note, we are just reusing the `mvp` variable to keep things simple. In truth, this is only the `Model Matrix`. Before we are done, we will refactor our code and *do it right*.
 
@@ -270,7 +270,7 @@ proj = glm::perspective(
 );
 ```
 
-We have now replaced the hardcoded aspect ratio calculated with our variable. This will be helpful later when we want to handle window resizing.
+We have now replaced the hardcoded aspect ratio calculation with our variable. This will be helpful later when we want to handle window resizing.
 
 We need to do one last thing before we can run our program again. We have to actually apply the projection matrix (`proj`) to our `model` matrix. Back in `display()` change the calculation of `mvp` to:
 
@@ -288,23 +288,23 @@ If you did everything correctly, you should see:
 
 Would you believe you are looking at the *inside* of the cube? We can see the top, bottom, left, right, and back of the cube, but not the front (which would be red). This is because we forgot about the *Depth Buffer*.
 
-If you remember back to our discussion about the [OpenGL Pipeline](../week_2/opengl_pipeline.md), we discussed how the Rasterizer is responsible for managing `z-culling`. By default, OpenGL draws pixels to the screen as they come. If two pixels would be draw in the same spot, the first one is overwritten by the second.
+If you remember back to our discussion about the [OpenGL Pipeline](../week_2/opengl_pipeline.md), we discussed how *Pixel Operations* is responsible for managing `z-culling`. By default, OpenGL draws pixels to the screen as they come. If two pixels would be drawn in the same spot, the first one is overwritten by the second.
 
 In our program, we render the front first and then each of the other sides. This means that *all* the red is replaced with what is behind. In order to have this handled correctly, we need to tell OpenGL to check for *depth*. This will result in any pixels that are further away from the camera than the pixel currently stored in the buffer being discarded.
 
 In `init()` we need to add `glEnable(GL_DEPTH_TEST)` *somewhere*. Where we put it doesn't really matter as `init()` is called after we initialize our `window` variable, which is required. So, put it wherever it brings you joy.
 
-By default, `GL_DEPTH_TEST` uses `GL_LESS` as the *Depth Function*. This means that the Rasterizer will only place pixels into the framebuffer if the depth (distance from the camera) is less than the current pixel stored. Note, "ties" are resolved using the current pixel, not the new pixel.
+By default, `GL_DEPTH_TEST` uses `GL_LESS` as the *Depth Function*. This means that OpenGL will only place pixels into the framebuffer if the depth (distance from the camera) is less than the current pixel stored. Note, "ties" are resolved using the current pixel, not the new pixel.
 
 If we were to run this now, we would again be presented with a blank screen. That is because we are only clearing the color buffer:
 
 ```C++
-glEnable(GL_DEPTH_TEST);
+glClear(GL_COLOR_BUFFER_BIT);
 ```
 
 OpenGL also maintains a depth buffer that stores the distance of each pixel from the camera. Because we never clear it, the depth values from previous frames remain. Every new fragment fails the depth test and is discarded, so nothing appears in the color buffer.
 
-The simple fix is to update the clear call in `display()`;
+The simple fix is to update the clear call in `display()`:
 
 ```C++
 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -314,14 +314,14 @@ If we run this now, we should be presented with a *red* square.
 
 ![Window displaying a red square](../images/week_4/red_square.png)
 
-Perfect! We now have the front face correctly displayed, and it is indeed *square* (compare it to the green *rectangle* we started with). Sadly, I feel like we are back to square one. You know, and I know that we are looking at a cube because we wrote the code. If we were to show this to someone else as *proof* that we were working in 3D, they may think we were crazy.
+Perfect! We now have the front face correctly displayed, and it is indeed *square* (compare it to the green *rectangle* we started with). Sadly, I feel like we are back to square one. You and I know that we are looking at a cube because we wrote the code. If we were to show this to someone else as *proof* that we were working in 3D, they may think we were crazy.
 
 # Transform and roll out!
 
 What do you think of adding some *rotation* to demonstrate that this is indeed a *cube*? The code we will use is:
 
 ```C++
-// rotate the mode 45 deg around the Y-axis
+// rotate the model 45 deg around the Y-axis
 model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 ```
 
@@ -335,12 +335,12 @@ If you actually did as I requested and tried the *rotation* in both places, you 
 
 So, why did one order work and not the other? If you think back to our discussion on 3D Math, the order in which matrices are multiplied is important. We multiply matrices right to left, so we want our *first* transform to be on the *right*.
 
-In our example with the cube, we want to rotate *first* and then translate. This allows our object to rotate around the world origin and then get pushed back. If we reverse that order, it gets pushed back and *then* rotates around the origin as if it was on the edge of wheel. This is why we ended up with a blank screen when calling `rotate` first; the cube actually rotated out of view!
+In our example with the cube, we want to rotate *first* and then translate. This allows our object to rotate around the world origin and then get pushed back. If we reverse that order, it gets pushed back and *then* rotates around the origin as if it was on the edge of a wheel. This is why we ended up with a blank screen when calling `rotate` first; the cube actually rotated out of view!
 
 So, when programming transforms, it is *very* important to understand the order you wish the transforms to be applied and then call the functions *in reverse*.
 
 ```C++
-glm::mat4 model = glm::mat4(1.0f); // Always start with the identiy matrix
+glm::mat4 model = glm::mat4(1.0f); // Always start with the identity matrix
 model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
 model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 ```
@@ -400,7 +400,7 @@ Back in our application code, we will need to update our `mvp` associated variab
   * we already defined `proj` in `init()`
 * Set Uniform Variables in `display()`
   * `mvpLoc` needs to be changed to `mvLoc` and `value_ptr(mvp)` to `value_ptr(mv)`
-  * 'pLoc' needs to be set using `value_ptr(proj)`
+  * `pLoc` needs to be set using `value_ptr(proj)`
 
 After making these changes, you should be able to run your program again and produce the same results. If you get a blank screen, check to make sure your vertex shader is correct and the rest of the variables have been updated/declared in the application.
 
@@ -430,14 +430,14 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     //Calculate our new projection matrix
     proj = glm::perspective(
         glm::radians(45.0f),           // FOV
-        aspect,                        // aspect ratio (hard-coded for now)
+        aspect,                        // aspect ratio
         0.1f,                          // near plane
         100.0f                         // far plane
         );
 }
 ```
 
-Go ahead and place this entire function before `init()`. Then, in `main()` right after `glfwMakeContexCurrent(window)` we need to call:
+Go ahead and place this entire function before `init()`. Then, in `main()` right after `glfwMakeContextCurrent(window)` we need to call:
 
 ```C++
 glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -450,7 +450,7 @@ Build and run this new version of our program. Now, every time we resize the win
 While we covered a great deal during this exploration, there are *a lot* of things to learn *by doing*. I highly recommend that you spend some time adding transforms/animations to our cube before you move onto the next lesson. Some things to try:
 
 * Try animating the translation as well as the rotation. Which order should you do it in?
-* Try rotating the object in multiple directions as once.
+* Try rotating the object in multiple directions at once.
 * Try to get the cube to "orbit" around the camera. This would require it to go out of view on one side and then back on the other.
 * If you come up with anything fun, please share on the discussion board!
 

@@ -194,7 +194,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     //Calculate our new projection matrix
     proj = glm::perspective(
         glm::radians(45.0f),              // FOV
-        aspect,                           // aspect ratio (hard-coded for now)
+        aspect,                           // aspect ratio
         0.1f,                             // near plane
         100.0f                            // far plane
     );
@@ -238,7 +238,7 @@ void init(GLFWwindow* window) {
 
     proj = glm::perspective(
         glm::radians(45.0f),              // FOV
-        aspect,                  // aspect ratio (hard-coded for now)
+        aspect,                  // aspect ratio
         0.1f,                             // near plane
         100.0f                            // far plane
     );
@@ -250,9 +250,8 @@ void display(GLFWwindow* window, double currentTime) {
 
     glUseProgram(renderingProgram);
 
-    // This is not a true mvp matrix,
-    // we will learn how to do it correctly soon
-    glm::mat4 model = glm::mat4(1.0f); // Always start with the identiy matrix
+    // Build the model matrix (the view matrix is still the identity, so mv == model)
+    glm::mat4 model = glm::mat4(1.0f); // Always start with the identity matrix
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
     model = glm::rotate(model, glm::radians((float)currentTime * 45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -266,7 +265,7 @@ void display(GLFWwindow* window, double currentTime) {
     // Bind VAO
     glBindVertexArray(vao[0]);
 
-    // Draw triangle
+    // Draw cube (36 vertices)
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
