@@ -4,11 +4,11 @@
 
 # Introduction
 
-In order to write an OpenGL application, we need to use the OpenGL API. As mentioned, we will be using the C++ "flavor" of OpenGL's API. It will allow us to tell the computer what we want it to do on the way to displaying our 2D and 3D scenes. We will also need to utilize some of those frameworks we installed in Week 1. Remember, modern OpenGL has done away with much of the built-in functions and relies on developers specifying their own, or, more commonly, using 3rd party libraries.
+In order to write an OpenGL application, we need to use the OpenGL API. As mentioned, we will be using the C++ "flavor" of OpenGL's API. It will allow us to tell the computer what we want it to do on the way to displaying our 2D and 3D scenes. We will also need to utilize some of those frameworks we installed in Week 1. Remember, modern OpenGL has done away with many of the built-in functions and relies on developers specifying their own, or, more commonly, using 3rd party libraries.
 
 # Getting Started
 
-## Components to an C++ OpenGL Application
+## Components of a C++ OpenGL Application
 
 Let's start with a bird's eye view of what we need to have in our OpenGL application.
 
@@ -16,7 +16,7 @@ Let's start with a bird's eye view of what we need to have in our OpenGL applica
 * Input Handling - monitoring for things like key presses or mouse clicks
 * Error Checking - validating that things are working correctly
 
-That's really it at the most basic level. Create a window to display our scene and gather input from the user before destroying the window when the application is closed. In order to these other steps, we will want to check to ensure things like windows are created correctly before we try to draw to them.
+That's really it at the most basic level. Create a window to display our scene and gather input from the user before destroying the window when the application is closed. In order to do these other steps, we will want to check to ensure things like windows are created correctly before we try to draw to them.
 
 ## Enough talk! Let's get to drawing!
 
@@ -39,7 +39,7 @@ The very first thing we need to have in our application's code are the *includes
 
 For now, we are going to skip over `init()` and `display()`, and move straight to `main()`. Don't worry, we will be coming back to these functions shortly.
 
-The first line of `main()` is an if statement that calls `glfwInit()`. Clever readers can likely guess what this does based on the error message if this function returns a failed state: it initiates the GLFW functions.
+The first line of `main()` is an if statement that calls `glfwInit()`. Clever readers can likely guess what this does based on the error message if this function returns a failed state: it initializes the GLFW library.
 
 Having checks like this in our code is always a good idea. We want to make as few assumptions as possible and exit at the earliest sign of a problem and not wait until things really come off the rails.
 
@@ -47,7 +47,7 @@ The next important line is where we create our window: `GLFWwindow* window = glf
 
 We create a pointer to a `GLFWwindow` object and name it `window`. We then call `glfwCreateWindow` to create our window object.
 
-**NOTA BENE**[^1]: We are going to go over all of these parameters here, but if you ever find yourself forgetting what they are or in what order you should define them, you should go to read the official documentation[^2] (or just Google the function name if you know it). Going to the source will save you time hunting through all the Canvas explorations looking for the needed information.
+**NOTA BENE**[^1]: We are going to go over all of these parameters here, but if you ever find yourself forgetting what they are or in what order you should define them, you should go read the official documentation[^2] (or just Google the function name if you know it). Going to the source will save you time hunting through all the Canvas explorations looking for the needed information.
 
 |Parameter Name | Value | Type | Purpose |
 |----|----|----|----|
@@ -59,9 +59,9 @@ We create a pointer to a `GLFWwindow` object and name it `window`. We then call 
 
 We then use this `window` pointer in the following if statement to verify that it was actually created.
 
-One thing we didn't do in the `test_install.cpp` program is specify a version of OpenGL our code will be targeting. When testing our install, we wanted to keep it as simple as possible, but when you actually write your application you will want to specify which version of OpenGL it requires to run.
+Just above the window creation, `test_install.cpp` specifies which version of OpenGL our code is targeting. Whenever you write an OpenGL application you will want to do the same.
 
-Why is this need you may ask. Well, not all the features of OpenGL are supported by all GPUs or even platforms. For example, if you want to use *Geometry Shaders* you need at least OpenGL 3.2. In order to specify our version in our application, we actually specify it for the window we will create.
+Why is this needed, you may ask? Well, not all the features of OpenGL are supported by all GPUs or even platforms. For example, if you want to use *Geometry Shaders* you need at least OpenGL 3.2. In order to specify our version in our application, we actually specify it for the window we will create.
 
 So, before creating our window, we want to add "hints". For this course, we want to target OpenGL 4.1. We are going to use this version because it is the last version supported by macOS, and we won't be actually writing any *Compute Shaders*, which were introduced in 4.3.
 
@@ -75,13 +75,13 @@ We also need to specify that we are using the "core" profile of Version 4.1. Thi
 * `glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);`
 * `glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //Needed for MacOS`
 
-If for some reason the system we are trying to run this code doesn't support OpenGL 4.1, our window creation will fail. We would then need to investigate which version of OpenGL currently was available and update if necessary/possible.
+If for some reason the system we are trying to run this code on doesn't support OpenGL 4.1, our window creation will fail. We would then need to investigate which version of OpenGL currently was available and update if necessary/possible.
 
 We now need to tell GLFW what our current *context* is. The context is just the current state of OpenGL we wish to use. To set the context, we will use our `window` pointer.
 
 * `glfwMakeContextCurrent(window);`
 
-After this statement, you will see `glewExperimental = GL_TRUE;` This needs to be done after we set our context in the previous function call. This tells GLEW (the OpenGL Extension Wrapper) to ensure all the necessary OpenGL extensions (including things like the Core Profile) are loaded. This can be very important if you are writing code to target macOS.
+After this statement, you will see `glewExperimental = GL_TRUE;` This needs to be done after we set our context in the previous function call. This tells GLEW (the OpenGL Extension Wrangler Library) to load every function pointer the driver can provide, even the ones it does not advertise through the old extension string. This can be very important if you are writing code to target macOS.
 
 We now need to verify that GLEW is working by calling `glewInit() != GLEW_OK` in an if statement. If it isn't OK, we display an error message and exit.
 
@@ -97,7 +97,7 @@ Therefore, let us skip ahead to our *rendering loop*. This is just a fancy name 
 
 This loop will run until GLFW detects a condition that closes this window. This typically means clicking the "X" at the top of the window or through a keyboard command to close the window.
 
-Typically, we will want the following three function calls (at the very least) in our `display()` function and in this order:
+Typically, we will want the following three function calls (at the very least) in our *rendering loop* and in this order:
 
 * `display(window, glfwGetTime());`
 * `glfwSwapBuffers(window);`
@@ -117,7 +117,7 @@ Colors in OpenGL default to RGB (Red, Green, and Blue). RGB color is something c
 Don't believe me? Take your phone and zoom in on your screen to see that each pixel is made up of LEDs of red, green, and blue. Here is an example of me doing just that on this very document!
 
 ![Close up of my computer screen showing red, green, and blue LEDs](../images/week_2/rgb_pixels.jpg)  
-<figcaption>Close of my computer screen showing red, green, and blue LEDs</figcaption>
+<figcaption>Close-up of my computer screen showing red, green, and blue LEDs</figcaption>
 
 We won't go into detail on the science behind additive color, because we only need to know that we need to use RGB color for our work in this course.
 
@@ -129,7 +129,7 @@ Yeah, OpenGL likes to have many things range from 0-1.0 (normalized floats). So,
 
 But, wait! `glClearColor` had *four* parameters, not the expected three needed for RGB. You are right! What do you think that last float is going to be used for?
 
-**Hide Answer: It is the Alpha value! This controls the *opacity* of color. A value of '1.0' is 100% opaque. Typically, we will stick with '1.0' when specifying colors and just let our shaders handle any translucency needed.**
+**Hide Answer: It is the Alpha value! This controls the *opacity* of the color. A value of '1.0' is 100% opaque. Typically, we will stick with '1.0' when specifying colors and just let our shaders handle any translucency needed.**
 
 Once we set our *clear color*, we want to actually clear out the frame buffer and replace all the pixels with our clear color. `GL_COLOR_BUFFER_BIT` represents the buffer that is currently targeted for color writing (see front and back buffer discussion below). When we use this built-in *enum* with `glClear()`, we wipe the buffer and replace it with beautiful Beaver Orange!
 
@@ -137,11 +137,11 @@ One last thing about the `display()` function. We don't just send the current co
 
 We are almost done! We have just a few more elements to cover when it comes to creating an OpenGL app.
 
-Under the `display()` function call, we have `glfwSwapBuffers(window);`. OpenGL is uses two buffers to manage the images on the screen. There is a **front buffer** *and* a **back buffer**. OpenGL writes into the *back buffer* during our `display()` function, and then that buffer is swapped into the *front buffer*. Why do you think it works this way?
+Under the `display()` function call, we have `glfwSwapBuffers(window);`. OpenGL uses two buffers to manage the images on the screen. There is a **front buffer** *and* a **back buffer**. OpenGL writes into the *back buffer* during our `display()` function, and then that buffer is swapped into the *front buffer*. Why do you think it works this way?
 
 **Hide Answer: What do you think would happen if OpenGL only used one buffer and wrote into it while also displaying it to the user? Well, we would end up with having some wild situations where part of the screen is being overwritten while part of the screen shows the last rendering pass. This would cause tearing and would make it very difficult for the viewer. So, the back buffer is only swapped once it is fully rendered and ready to be viewed.**
 
-The last element in `main()` is `glfwPollEvents()`. This is how we are going to monitor input from the user. Astute students may realize that our `main()` loop executes once for each frame rendered. We want to collect and then process any input the user has made since the last frame was generated. GLFW maintains an *event queue* and `glfwPollEvents()` pulls all the events that haven't been processed for processing.
+The last element in our rendering loop is `glfwPollEvents()`. This is how we are going to monitor input from the user. Astute students may realize that our `main()` loop executes once for each frame rendered. We want to collect and then process any input the user has made since the last frame was generated. GLFW maintains an *event queue* and `glfwPollEvents()` processes every event in that queue (dispatching each to the appropriate callback) before returning.
 
 In our sample code, we don't do this manually, but GLFW has some default behavior built in, like closing the window if the "X" is clicked. This event would cause our `while` loop to terminate. We will be going into input processing more later in the course.
 
@@ -156,4 +156,4 @@ In order to start drawing pixels, we need to go over *shaders*, which is coming 
 [^1]: Nota Bene is Latin for "note well." In other words, "pay attention."
 [^2]: [GLFW Documentation](https://www.glfw.org/docs/latest/)
 [^3]: [Screen Tearing](https://www.reinterpretcast.com/screen-tearing)
-[^4]: [Additive & Subtractive Color Models(https://pavilion.dinfos.edu/Article/Article/2355687/additive-subtractive-color-models/)]
+[^4]: [Additive & Subtractive Color Models](https://pavilion.dinfos.edu/Article/Article/2355687/additive-subtractive-color-models/)

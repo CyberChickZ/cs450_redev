@@ -5,7 +5,7 @@
 
 # Introduction
 
-So, we have been teasing you a bit about actually getting into OpenGL programming. We exhaustively have covered the layout and function of our starter program, which we used to test our tool installation. But we didn't *draw* anything; we just cleared the window with a specified color.
+So, we have been teasing you a bit about actually getting into OpenGL programming. We have exhaustively covered the layout and function of our starter program, which we used to test our tool installation. But we didn't *draw* anything; we just cleared the window with a specified color.
 
 That all changes *now*! We are finally ready to *Get to the Point!* (editor's note: would you believe I loathe puns?). We are going to display our very first PIXEL!
 
@@ -17,7 +17,7 @@ Go ahead and use the template we set up in an earlier exploration to create a ne
 
 # Shader Code
 
-While OpenGL, has ways of drawing without using *shaders*, in this course we are focusing 100% on the *programmable pipeline*. Therefore, we first need to write some quick shader code.
+While OpenGL has ways of drawing without using *shaders*, in this course we are focusing 100% on the *programmable pipeline*. Therefore, we first need to write some quick shader code.
 
 For now, we are going to keep our shader code *very* simple. Do you remember which shaders are required for every OpenGL application?
 
@@ -27,12 +27,12 @@ Shader code can be directly written into the `.cpp` file, but that is a bad habi
 
 ## Anatomy of a Shader
 
-Shader source code uses GLSL (OpenGL Shader Language), which follows most of the same syntax requirements as C/C++. Let's look at a *generic* shader.
+Shader source code uses GLSL (OpenGL Shading Language), which follows most of the same syntax requirements as C/C++. Let's look at a *generic* shader.
 
 ```GLSL
 #version 410 core
 in type in_variable_name;
-out type out_variable name;
+out type out_variable_name;
 
 uniform type uniform_name;
 
@@ -43,7 +43,7 @@ void main() {
 }
 ```
 
-The very first line of every shader program *must* specify the version of OpenGL targeted. For us, we will be focusing exclusively on OpenGL 4.1, so all of our shader programs will start with `#version 410 core`. The `core` keyword basically forces using the fully programmable pipeline by removing all the deprecated fixed-function methods.
+The very first line of every shader program *must* specify the version of GLSL targeted (GLSL 4.10 pairs with OpenGL 4.1). For us, we will be focusing exclusively on OpenGL 4.1, so all of our shader programs will start with `#version 410 core`. The `core` keyword basically forces using the fully programmable pipeline by removing all the deprecated fixed-function methods.
 
 Next, we may need to specify the information being passed into and out of the shader program. We do this with the `in` and `out` keywords. The "type" will change depending on what is required, but will often be some form of vector (`vec3` or `vec4`). Remember, OpenGL is a *pipeline*, so the inputs come from earlier in the pipeline and the outputs are fed into the next portion of the pipeline.
 
@@ -57,7 +57,7 @@ Each shader file will need to have a `main` function, but you can also write oth
 
 We are going to keep things simple for now and create the most basic vertex shader imaginable.
 
-First, create a new file in your project and call it "shader.vert" In that file, paste the following:
+First, create a new file in your project and call it "shader.vert". In that file, paste the following:
 
 ```GLSL
 #version 410 core
@@ -88,13 +88,13 @@ If you recall, the primary goal of the Fragment Shader is to determine the final
 
 **HIDE ANSWER: That's right! We set our pixel to be the color *blue*!**
 
-If you have ever seen older OpenGL shader code, you may be expecting to see `gl_FragColor`, similar to how we saw `gl_Position` for the Vertex Shader. While it can still be used with the fixed-pipeline, we cannot use it since we are limiting ourselves to the programmable pipeline (remember, `core` forces this). Instead, the very first `out` specified will automatically be assigned to represent the final pixel color. Later, we will learn more directly how to use the keyword `layout` to explicitly specify where we want each `out` value stored.
+If you have ever seen older OpenGL shader code, you may be expecting to see `gl_FragColor`, similar to how we saw `gl_Position` for the Vertex Shader. While it still exists in the compatibility profile, it was removed from `core`, so we cannot use it. Instead, the very first `out` specified will automatically be assigned to represent the final pixel color. Later, we will learn more directly how to use the keyword `layout` to explicitly specify where we want each `out` value stored.
 
 # So...what do we do now?
 
 We have now written two shader files (`shader.vert` and `shader.frag`) and added them to our project. Now we need a way to load this code into our application. If this were a C++ course, we would force you to noodle this out yourself, but since it isn't, we are doing the grunt work for you!
 
-Go ahead and download the [get_to_the_point.cpp](../downloadable_files/get_to_the_point.cpp) file and add it to your project. Did you forget to add your shader files to the project? If so, do so now. You should have three files added:
+Go ahead and download the [get_to_the_point.cpp](../downloadable_files/week_2/get_to_the_point.cpp) file and add it to your project. Did you forget to add your shader files to the project? If so, do so now. You should have three files added:
 
 * get_to_the_point.cpp
 * shader.vert
@@ -116,7 +116,7 @@ In order to load our source from a file, we need to make sure we add some includ
 
 ### Globals!
 
-We also need to define some globals. You may be screaming, "GLOBALS ARE BAD PROGRAMMING PRACTICE!", and you would correct *most* of the time, but this is an exception. We will use the following globals (technically one is a defined value) to allow us not to have to pass around values to each function we write.
+We also need to define some globals. You may be screaming, "GLOBALS ARE BAD PROGRAMMING PRACTICE!", and you would be correct *most* of the time, but this is an exception. We will use the following globals (technically one is a defined value) to allow us not to have to pass around values to each function we write.
 
 ```C++
 #define numVAOs 1
@@ -161,9 +161,9 @@ Again, this isn't a C++ course, so we aren't going to spend a lot of time going 
 
 ### Building a Shader Program
 
-We compile the shader code in order to build our *Shader Program*. We will not examine the `buildShaderProgram()` function.
+We compile the shader code in order to build our *Shader Program*. We will now examine the `buildShaderProgram()` function.
 
-The first thing we need to do is tell OpenGL to create shader programs, which will also assign them an ID number.
+The first thing we need to do is tell OpenGL to create shader objects (one per shader stage), which will also assign each an ID number.
 
 ```C++
     GLuint vShader = glCreateShader(GL_VERTEX_SHADER);
@@ -182,7 +182,7 @@ Now that we have our shader program IDs, it is time to attach the source code to
 You can see the conversion is simple, and we stored the new c-strings in intermediary variables. We can now call `glShaderSource` to bind the source code to the shader program. This function takes four parameters:
 
 * *shader* - shader program ID
-* *count* - the number of strings in the program
+* *count* - the number of strings in the `string` array
 * *string* - the array of pointers to the strings to be loaded
 * *length* - NULL for null terminated strings, which we will be using
 
@@ -220,33 +220,33 @@ This is where we call `buildShaderProgram()` and finally set the value for our g
 
 We also need to tell OpenGL how many VAOs to generate, and we need to tell it where to store them once generated (hint: in `vao`). We do this with `glGenVertexArrays(numVAOs, vao)`.
 
-Then we need to tell OpenGL which VAO we want to have *active*. This basically tells OpenGL which vertex array we wish to use when we call `glDrawArrays()`. We specify which VAO to use by *binding* it with `glBindVertexArray(vao[0])`. Note, even though we hardcoded our vertex into the shader code, we still need to go through these steps. Also note that `glBindVertexArray` may need to be called in other places other than `init()`, depending on how we are organizing our application. It is very likely we will want to do the binding closer to the actually drawing function calls, but for now this is fine.
+Then we need to tell OpenGL which VAO we want to have *active*. This basically tells OpenGL which vertex array we wish to use when we call `glDrawArrays()`. We specify which VAO to use by *binding* it with `glBindVertexArray(vao[0])`. Note, even though we hardcoded our vertex into the shader code, we still need to go through these steps. Also note that `glBindVertexArray` may need to be called in places other than `init()`, depending on how we are organizing our application. It is very likely we will want to do the binding closer to the actual drawing function calls, but for now this is fine.
 
 ### display() Updates
 
-When we call `Program(renderingProgram)` we are telling OpenGL which program we want to use when we begin drawing. We initiate the drawing using `glDrawArrays()`. Let's take a moment to look at the parameters:
+When we call `glUseProgram(renderingProgram)` we are telling OpenGL which program we want to use when we begin drawing. We initiate the drawing using `glDrawArrays()`. Let's take a moment to look at the parameters:
 
 * *mode* - GL_POINTS - tells OpenGL to draw each vertex as a single point
 * *first* - 0 - specifies the index within the active VAO where we want to start drawing (often this will be 0)
 * *count* - 1 - specifies the number of indices to draw (one for our program)
 
-The shaders will be run on each vertex in the array: one after another. First, they will pass through the vertex shader and then the fragment shader. Remember, one of the reasons GPUs are so efficient, is that they don't have to wait for a vertex to be fully processed before pushing the next one into the pipeline. Therefore, we will have multiple vertices all flowing through our GPU on the way to the framebuffer.
+The vertex shader runs on each vertex in the array; the resulting primitives are rasterized into fragments, and the fragment shader then runs on each fragment. Remember, one of the reasons GPUs are so efficient is that they don't have to wait for a vertex to be fully processed before pushing the next one into the pipeline. Therefore, we will have multiple vertices all flowing through our GPU on the way to the framebuffer.
 
 # Let's DRAW!
 
-The rest of `get_to_the_point.cpp` is the same as our initial setup code, but with some of the checks used to verify things were installed correctly removed. So, if you have been following along, you should have a new project (I named mine "Get to the Point") with two shader files and our OpenGL application code we just went over.
+The rest of `get_to_the_point.cpp` is the same as our initial setup code, but with some of the checks used to verify things were installed correctly removed. We also dropped the `glClearColor` call, so the window now clears to the default black. So, if you have been following along, you should have a new project (I named mine "Get to the Point") with two shader files and our OpenGL application code we just went over.
 
-Go ahead and build the solution (F7) and then run it (Ctrl-F5). You should now see a window pop up displaying our single blue pixel! Depending on the resolution of your monitor, you may need to squint to see the tiny spec.
+Go ahead and build the solution (F7) and then run it (Ctrl-F5). You should now see a window pop up displaying our single blue pixel! Depending on the resolution of your monitor, you may need to squint to see the tiny speck.
 
 ![Window with a single blue pixel](../images/week_2/tiny_spec.png)
 
-You know what? This minuscule dot doesn't do our efforts' justice. Let's really make it stand out! Go back into our `display()` function and add the following code before `glDrawArrays(...)`: `glPointSize(30.0f);`.
+You know what? This minuscule dot doesn't do our efforts justice. Let's really make it stand out! Go back into our `display()` function and uncomment the `//glPointSize(30.0f);` line that sits just before `glDrawArrays(...)`.
 
 Now rebuild (F7) and rerun (Ctrl-F5) to see what this small change does. It should look like this:
 
 ![Window with blue square in the center](../images/week_2/blue_square.png)
 
-You may have guessed what `glPointSize()` does; it adjusts the size of any pixel drawn. This really isn't something we want to get in the habit of doing. We would much rather use multiple vertices to define our shapes, which we will learn shortly. For now, it is just useful to make our efforts easier to see!
+You may have guessed what `glPointSize()` does; it adjusts the size (in pixels) of any point drawn with `GL_POINTS`. This really isn't something we want to get in the habit of doing. We would much rather use multiple vertices to define our shapes, which we will learn shortly. For now, it is just useful to make our efforts easier to see!
 
 # Quick Recap
 
@@ -254,7 +254,7 @@ We covered a lot of ground with this exploration. I wanted to take a moment to h
 
 * Build shader program (`buildShaderProgram`)
   * Load shader code from a file (`loadShaderSource`)
-  * Create shader program and get its ID (`glCreateShader`)
+  * Create shader object and get its ID (`glCreateShader`)
   * Load shader source into the shader program (`glShaderSource`)
   * Compile the shader (`glCompileShader`)
   * Create rendering program and get its ID (`glCreateProgram`)

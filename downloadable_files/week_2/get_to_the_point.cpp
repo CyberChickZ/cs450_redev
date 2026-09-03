@@ -97,7 +97,7 @@ int main() {
         std::cerr << "Failed to initialize GLEW" << std::endl;
         return -1;
     }
-    glfwSwapInterval(1);  // enables Vsync3
+    glfwSwapInterval(1);  // enables Vsync
 
     init(window);
 
