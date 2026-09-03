@@ -5,13 +5,13 @@
 
 # Introduction
 
-As we saw in our [Get to the Point](../week_2/get_to_the_point.md) exploration, we *briefly* took a look at the *Anatomy of a Shader*. We discussed that you can send data *into* a shader (as well as out). In that program, we didn't actually do that as we hardcoded our vertex position directly into the shader code. Let us know, fill in those blanks on sending data to a shader.
+As we saw in our [Get to the Point](../week_2/get_to_the_point.md) exploration, we *briefly* took a look at the *Anatomy of a Shader*. We discussed that you can send data *into* a shader (as well as out). In that program, we didn't actually do that as we hardcoded our vertex position directly into the shader code. Let us now fill in those blanks on sending data to a shader.
 
 # Shader Side
 
 In the *Anatomy of a Shader*, there were two ways to get data into a shader by either using `in` or `uniform`. One is used for data that will change for each vertex, the other for data that we will reuse for multiple vertices. Do you have a guess as to why we make this distinction?
 
-**HIDE ANSWER: It is to be more effecient. While modern GPUs have *gigabytes* of RAM, but we don't want to waste it! We want to use only what we must, so we can process more vertices, which leads to more detailed scenes.**
+**HIDE ANSWER: It is to be more efficient. While modern GPUs have *gigabytes* of RAM, we don't want to waste it! We want to use only what we must, so we can process more vertices, which leads to more detailed scenes.**
 
 ## Shader Inputs (`in` variables)
 
@@ -22,7 +22,7 @@ For data that is updated for each vertex, we want to use `in`. This includes:
 * Surface Normal (`vec3`) - used for lighting
 * Texture Coordinates (`vec2`)
 
-We won't be using all of these right away, I just wanted to give you a look ahead. I am also showing you the most common data type associated with each type of information. When used in the *Vertex Shader*, we will call these variables *Vertex Attributes*, which aligns with how the functions we use to set them (see below). In all other shader types, we will simply call them *Shader Inputs*.
+We won't be using all of these right away, I just wanted to give you a look ahead. I am also showing you the most common data type associated with each type of information. When used in the *Vertex Shader*, we will call these variables *Vertex Attributes*, which aligns with the names of the functions we use to set them (see below). In all other shader types, we will simply call them *Shader Inputs*.
 
 ## Uniform Inputs (`uniform` variables)
 
@@ -59,9 +59,9 @@ Global declarations:
 ```C++
 // Vertex data for a simple triangle
 float vertices[] = {
-      -2.0f, -2.0f, 0.0f,
-       2.0f, -2.0f, 0.0f,
-       0.0f,  2.0f, 0.0f
+      -0.5f, -0.5f, 0.0f,
+       0.5f, -0.5f, 0.0f,
+       0.0f,  0.5f, 0.0f
 };
 
 #define numVAOs 1
@@ -125,7 +125,7 @@ Next, we `#define` two *macros*, which can be thought of in the same way as any 
 
 As we mentioned in an earlier exploration, OpenGL requires that we bind at least one VAO (even if it is "empty") before we can call `glDrawArrays`. The VAO is where we will store the layout of how we have configured our vertex data (details to follow).
 
-As mentioned above, we need at least on VBO to send vertex data to the vertex shader. For now, we are just going to use one VBO (to hold position data), but it is not uncommon to have four, though there really is no limit. Each VBO would hold different vertex data (see *Shader Inputs* above for details).
+As mentioned above, we need at least one VBO to send vertex data to the vertex shader. For now, we are just going to use one VBO (to hold position data), but it is not uncommon to have four, though there really is no limit. Each VBO would hold different vertex data (see *Shader Inputs* above for details).
 
 We then use these two macros to declare an array to hold our soon-to-be created VAOs and VBOs. The data type for these arrays must be `GLuint`. Take a guess as to why that is.
 
@@ -133,19 +133,19 @@ We then use these two macros to declare an array to hold our soon-to-be created 
 
 Now we move onto the code in `init()`. We only need to generate our arrays and buffers *once*, so doing it in `init()` makes perfect sense. We need to allocate the memory for our VAOs and VBOs.
 
-We start by calling `glGenVertexArrarys(numVAOs, vao)`. We pass in the number of VAOs we want to create (`numVAOs`) and the array we wish to fill with the VAO ID numbers (`vao`).
+We start by calling `glGenVertexArrays(numVAOs, vao)`. We pass in the number of VAOs we want to create (`numVAOs`) and the array we wish to fill with the VAO ID numbers (`vao`).
 
 We do something similar to allocate the memory needed for our VBOs using `glGenBuffers(numVBOs, vbo)`. Again, this creates the buffers and fills `vbo` with the ID numbers associated with each newly created buffer.
 
 **Editors Note:** You may see these calls split up, with `glBindVertexArray` in between, which is *technically* allowed. That said, it is better to get into the habit of calling all your `glGen` calls all at the same time so you don't forget and make mistakes.
 
-Next, we need to tell OpenGL *which* VAO we wish to modify by *binding* it (`glBindVertexArray(vao[0])`). It is absolutely critical that we call this before we bind our VBOs. If we do it in the other order, OpenGL will not associate the changes to the VBO with the desired VAO. 
+Next, we need to tell OpenGL *which* VAO we wish to modify by *binding* it (`glBindVertexArray(vao[0])`). It is critical that the VAO is bound *before* we call `glVertexAttribPointer` and `glEnableVertexAttribArray` below, because those calls are recorded into whichever VAO is currently bound. 
 
 Once that is done, we can call `glBindBuffer(GL_ARRAY_BUFFER, vbo[0])`, which informs OpenGL which VBO we will be modifying. During the binding, we have to tell OpenGL the type of array we wish to use. This is important, because when we generate the buffers, they are simple "blobs" of memory, with no real structure. `GL_ARRAY_BUFFER` tells OpenGL to treat the data as an array (almost always consisting of vertex data).
 
 Quick recap, we first generated our VAOs/VBOs. We then *bound* both of them (first the VAO, then the VBO). Now, it is time to *fill* the VBO. We do this using `glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW)`. Let's break down each of these parameters.
 
-* `GL_ARRAY_BUFFER` - tells OpenGL that we are filling this is sequential indexed data
+* `GL_ARRAY_BUFFER` - tells OpenGL that we are filling this with sequential indexed data
 * `sizeof(vertices)` - tells OpenGL that the amount of memory we need is enough to hold all our vertex data
 * `vertices` - tells OpenGL where to find the data to load into the buffer
 * `GL_STATIC_DRAW` - tells OpenGL how often you plan on updating this buffer and how often you plan on accessing it.[^4] This helps the GPU to know where in memory to most efficiently store the buffer data. `STATIC` means it will be written once and accessed many times. `DRAW` means the CPU will write the data and the GPU will read it.
@@ -155,9 +155,9 @@ Now that we have loaded our buffer, we need to inform OpenGL how we intend to ge
 * `0` - tells OpenGL which *position* within the VAO we want to store the buffer. As mentioned earlier, the first position (`0`) is typically associated with the position data for the vertices
 * `3` - tells OpenGL how many elements of the buffer we want to send to the shader at a time. Since we are dealing with position coordinates (x, y, and z), we want to send three
 * `GL_FLOAT` - tells OpenGL the type of data each element is; vertices are stored as floats
-* `GL_FALSE` - tells OpenGL that we don't want the data normalized (i.e. converted to [-1.0, 1.0]) during the transfer
+* `GL_FALSE` - tells OpenGL that we don't want the data normalized (i.e. converted to [0, 1] or [-1, 1] (this only applies to integer types and does nothing for `GL_FLOAT`)) during the transfer
 * `3 * sizeof(float)` - tells OpenGL how much "space" or *stride* there is between the beginning of each element. Here, we are telling OpenGL that a new vertex starts after every three floats. In our example, our vertex data is *tightly packed*, meaning that each vertex consists only of the three position elements. Many times you will see *interleaved* data where each vertex has not only its position stored, but also color, texture coordinates, and normals. In those instances, you have to change the multiplication factor so OpenGL knows where the next vertex starts in the buffer.[^5] In this course, we will only be using tightly packed buffers to keep things easier to read.
-* `0` - tells OpenGL which index in the array is the start of the data we want to use. In this course, our buffers will only ever hold one object at a time, so we will only ever start at `0`
+* `0` - the *byte offset* into the buffer where this attribute's data begins (passed as a pointer for historical reasons). Our buffer only holds position data starting at the beginning, so we use `0`. In this course, our buffers will only ever hold one object at a time, so we will only ever start at `0`
 
 That's it! Now our VAO contains a *vertex attribute* at position 0 that contains our vertex data. We will now be able to quickly load this VAO and restore all these "settings" whenever we want to draw our stored object. 
 
@@ -169,14 +169,14 @@ Now we can load our desired VAO to pass to the shader(s): `glBindVertexArray(vao
 
 **HIDE ANSWER:**
 
-* `GL_TRIANGLES` - defines the *mode* to use when drawing the vertices. Here, we are telling the shader to group every three vertices together into a triangle
+* `GL_TRIANGLES` - defines the *mode* to use when drawing the vertices. Here, we are telling OpenGL (primitive assembly) to group every three vertices together into a triangle
 * `0` - specifies the starting index of our vertex data. In this course, our buffers will only contain one object so we will always start at `0`
-* `3` - specifies the number vertices we will be reading in
+* `3` - specifies the number of vertices we will be reading in
 **END HIDING**
 
 Now that our buffer data has been sent off to the vertex shader, we must once again clean up after ourselves by calling `glBindVertexArray(0)`.
 
-OK, the buffer data has been passed to the shader, but how does the shader "catch" that data? This is handled in our vertex shader using `layout(location = 0 in vec3 pos;`. Recall, that traditionally position data is passed in as the first element of the VAO, which corresponds to `location = 0`. The keyword `layout` tells the shader where to look for the data. The keyword `in` (as seen before) indicates the variable ins an *input*. Since we set our vertex attribute to consist of three floats, we need to store them in a `vec3`, called `pos`. Simple, right? For now, we can ignore what the shader actually does (it's irrelevant to this discussion).
+OK, the buffer data has been passed to the shader, but how does the shader "catch" that data? This is handled in our vertex shader using `layout(location = 0) in vec3 pos;`. Recall, that traditionally position data is passed in as the first element of the VAO, which corresponds to `location = 0`. The keyword `layout` tells the shader where to look for the data. The keyword `in` (as seen before) indicates the variable is an *input*. Since we set our vertex attribute to consist of three floats, we need to store them in a `vec3`, called `pos`. Simple, right? For now, we can ignore what the shader actually does (it's irrelevant to this discussion).
 
 Congratulations, you have just learned how to pass and receive *vertex attributes* with a vertex shader! As mentioned above, this is just one way of getting data into a shader. The other way requires using *uniforms*, which we are going to cover next.
 
@@ -205,7 +205,7 @@ void main() {
 Define global variable:
 
 ```C++
-GLint mvpLoc = -1; // Note, this an GLint, not GLuint
+GLint mvpLoc = -1; // Note, this is a GLint, not GLuint
 ```
 
 Then in `init()` after linking the shader program:
@@ -219,7 +219,7 @@ Then in `display()`:
 
 ```C++
 glUseProgram(renderingProgram);  // must call this first
-glm::mat4 mvp = projection * view * model;  // transforms matrices calculated elsewhere
+glm::mat4 mvp = glm::mat4(1.0f);  // identity for now; we will build a real MVP later
 glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));  // set uniform
 ```
 
@@ -233,7 +233,7 @@ Next, we need to get the location on the GPU of the uniform variable. Since thes
 
 **HIDE ANSWER: That's right! Things that only need to be set once per program, should be set in `init()`**
 
-We use `glGetUniformLocation(renderingProgram, "mvp")` to gather this information. If the uniform is *not* found, this function will return `-1`. Later, when we try to set the uniform in the shader, if we try to use a location value that isn't on the GPU, the program will crash, unless that value is `-1`. In that situation, OpenGL will just skip trying to set the uniform and not crash. This also allows us to "forget" to set a uniform (or decide not to use it), OpenGL will just "optimizes it out" by not even loading that part of the shader code to the GPU (super smart!).
+We use `glGetUniformLocation(renderingProgram, "mvp")` to gather this information. If the uniform is *not* found, this function will return `-1`. Later, when we try to set the uniform, passing a location that does not belong to the program raises a `GL_INVALID_OPERATION` error and the call is ignored; a location of `-1` is silently ignored with no error. Note that the GLSL compiler may optimize away a uniform that is declared but never actually used, in which case `glGetUniformLocation()` returns `-1` for it (super smart!).
 
 This is why we set `mvpLoc` (and other uniform locations) to `-1` by default. Not only does this align with the OpenGL standard, but it also means that if we end up making a change to the shader code and rename or remove the uniform variable, our program won't automatically fail.
 
@@ -251,7 +251,7 @@ Then it is just the matter of calling `glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, g
 * `GL_FALSE` - tells OpenGL *not* to switch the rows and columns. We will always be using this because we will construct our matrices with GLM, which mirrors the OpenGL expectations for matrix formatting
 * `glm::value_ptr(mvp)` - We can't pass the entire object, so we pass a pointer to it. Please note, this function requires we add `#include<glm/gtc/type_ptr.hpp>` to our application
 
-That's it when it comes to setting uniforms. The only last piece is knowing how to set both `vertex attributes` and `uniforms`.
+That's it when it comes to setting uniforms. The last piece is seeing how to set both `vertex attributes` and `uniforms`.
 
 # Putting it all together
 
@@ -276,9 +276,9 @@ Define globals:
 ```C++
 // Vertex data for a simple triangle
 float vertices[] = {
-      -2.0f, -2.0f, 0.0f,
-       2.0f, -2.0f, 0.0f,
-       0.0f,  2.0f, 0.0f
+      -0.5f, -0.5f, 0.0f,
+       0.5f, -0.5f, 0.0f,
+       0.0f,  0.5f, 0.0f
 };
 
 #define numVAOs 1
@@ -323,7 +323,7 @@ In `display()`:
 ```C++
 glUseProgram(renderingProgram);  // must call this first
 
-glm::mat4 mvp = projection * view * model;  // transforms matrices calculated elsewhere
+glm::mat4 mvp = glm::mat4(1.0f);  // identity for now; we will build a real MVP later
 
 // Set Uniforms
 glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
@@ -352,7 +352,7 @@ Above, is all the code we have examined during this exploration, but interwoven.
    5. Bind VBO - `glBindBuffer(...)`
    6. Fill VBO with data - `glBufferData(...)`
    7. Set vertex attribute - `glVertexAttribPointer(...)`
-   8. Store vertex attribute - `glEnableVertexAttribArray(...)`
+   8. Enable vertex attribute - `glEnableVertexAttribArray(...)`
    9. Unbind VAO - `glBindVertexArray(0)`
    10. Unbind VBO - `glBindBuffer(..., 0)`
 3. display()
@@ -366,7 +366,7 @@ Above, is all the code we have examined during this exploration, but interwoven.
 
 All the examples above only showed how we send data to *Vertex Shaders*. How do we get data to the other stages of the pipeline? The first thing you need to know is that we can *only* send *vertex attributes* to *Vertex Shaders*. Second, we can send *uniforms* to *any* type of shader using the same method shown above. 
 
-**Warning**: uniform variables exist across all shaders. If you declare `uniform mat4 mvp` in the vertex shader, you can't then declare `uniform vec3 mvp` in another shader, because they have the same name, but different types.
+**Warning**: uniform variables are shared across all shader stages of a single linked program. If you declare `uniform mat4 mvp` in the vertex shader, you can't then declare `uniform vec3 mvp` in another shader, because they have the same name, but different types.
 
 Then how does something like a *Fragment Shader* get input using the `in` keyword? Simple, those *inputs* are the *outputs* of the previous shader! There are two ways of doing this, both are fine for this class, but one is "best practices."
 
@@ -400,11 +400,13 @@ Fragment Shader:
 layout(location = 0) in vec4 color;
 ```
 
-This is the *modern* way, and how you should learn if you want to continue into more advanced graphics materials. It uses the same `layout` keyword to specify the location as we did when passing in our VBO data. Notice that using this method allows us to "change" the name of the variable between shaders. This allows us to mix and match shaders without worrying about keeping the output/input names aligned, as long as they target the same location.
+This is the *modern* way, and how you should learn if you want to continue into more advanced graphics materials. It uses the same `layout` keyword to specify the location as we did when passing in our VBO data.
+
+**Nota bene:** location qualifiers on shader *stage* outputs/inputs were only added in OpenGL 4.4 (`GL_ARB_enhanced_layouts`). Since this course targets 4.1, the names must still match between stages, so use the by-name approach above for your own work.
 
 # Your Turn!
 
-Now, it is your turn to take what we have gone over here and apply it yourself. The code above isn't complete. You will need to write the shader files, load the shader code, build the rendering program, build your display loop, and all the rest. A good starting point is [get_to_the_point.cpp](../downloadable_files/get_to_the_point.cpp), which we built last week.
+Now, it is your turn to take what we have gone over here and apply it yourself. The code above isn't complete. You will need to write the shader files, load the shader code, build the rendering program, build your display loop, and all the rest. A good starting point is [get_to_the_point.cpp](../downloadable_files/week_2/get_to_the_point.cpp), which we built last week.
 
 Start a *new* Visual Studio project using the template we set up in Week 1 (please don't reuse older projects). Add the linked `.cpp` and create your shader files. The code for the vertex shader is provided above. I will be nice and give you the code for the fragment shader.
 
@@ -419,14 +421,14 @@ void main() {
 
 Finally, go ahead and delete the `glPointSize()` call in `display()`. Keeping it in won't affect the output, but it is no longer needed. Build and run your program. If you have done everything correctly, you should see the following:
 
-![Window displaying a blue triangle on a black backgroun](../images/week_3/getting_data_to_a_shader_output.png)
+![Window displaying a blue triangle on a black background](../images/week_3/getting_data_to_a_shader_output.png)
 
 If you are not seeing this output, go back and review where everything goes in this exploration (I like to do it split screen). If you are still stuck, please reach out on the discussion board for help troubleshooting.
 
 [^1]: This is a [Michael Buffer](https://en.wikipedia.org/wiki/Michael_Buffer) reference. If you don't get it, it means I am finally beyond old and should stop trying to make references. HA! Fat chance I will do that!
 [^2]: This was a [*Bruce Buffer*](https://en.wikipedia.org/wiki/Bruce_Buffer) reference; I couldn't mention one half-brother without mentioning the other!
-[^3]: Now I am just seeing how many times I can beat this dead horse. If yo don't know what I mean, see footnotes 1 and 2. If you manged to read footnote 3 without reading those two first, this joke makes no sense, but neither does your clicking on this footnote and not the others!
-[^4]: [Full breakdown of `glBUfferData` usage types](https://registry.khronos.org/OpenGL-Refpages/gl4/html/glBufferData.xhtml)
-[^5]: Techincally, with tightly packed data, you can just use `0` instead of using `X * sizeof(type)` and OpenGL will automatically calculate the stride, but I prefer to be explicit in all things.
+[^3]: Now I am just seeing how many times I can beat this dead horse. If you don't know what I mean, see footnotes 1 and 2. If you managed to read footnote 3 without reading those two first, this joke makes no sense, but neither does your clicking on this footnote and not the others!
+[^4]: [Full breakdown of `glBufferData` usage types](https://registry.khronos.org/OpenGL-Refpages/gl4/html/glBufferData.xhtml)
+[^5]: Technically, with tightly packed data, you can just use `0` instead of using `X * sizeof(type)` and OpenGL will automatically calculate the stride, but I prefer to be explicit in all things.
 [^6]: This isn't entirely true, if the window is resized you will need to update the projection matrix, but we can write separate code to handle that.
-[^7]: As we progress through the course, we will be explaining these function calls less and less. Our expectations is that you will start using the documentation to fill in any gaps.
+[^7]: As we progress through the course, we will be explaining these function calls less and less. Our expectation is that you will start using the documentation to fill in any gaps.

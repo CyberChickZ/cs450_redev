@@ -130,8 +130,8 @@ void display(GLFWwindow* window, double currentTime) {
     float t = static_cast<float>(currentTime);
 	float cycle = fmod(t, 2.0f);
 	//float yOffset = 0.5f - abs(cycle - 1.0f);
-    float yOffset = 0.5f * cos(t * glm::pi<float>()); // Oscillate between -0.5 and 0.5
-	float xOffset = 0.5f * sin(t * glm::pi<float>()); // Oscillate between -0.5 and 0.5
+    float yOffset = 0.5f * sin(t * glm::pi<float>()); // Oscillate between -0.5 and 0.5
+	float xOffset = 0.5f * cos(t * glm::pi<float>()); // Oscillate between -0.5 and 0.5
     glm::mat4 mvp = glm::mat4(1.0f);
 	float yOffsetNormal = (yOffset + 0.5f) / 1.0f; // Normalize yOffset to range [0, 1]
 	float xOffsetNormal = (xOffset + 0.5f) / 1.0f; // Normalize xOffset to range [0, 1]
@@ -175,7 +175,7 @@ int main() {
         std::cerr << "Failed to initialize GLEW" << std::endl;
         return -1;
     }
-    glfwSwapInterval(1);  // enables Vsync3
+    glfwSwapInterval(1);  // enables Vsync
 
     init(window);
 

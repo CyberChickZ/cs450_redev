@@ -12,7 +12,7 @@ Remember *way* back when we first set up our OpenGL application code, and we wen
 
 There are multiple ways of keeping track of time, but the easiest is to use our GLFW framework's built-in function: `glfwGetTime()`. This function returns a `double` that we then pass into `display()`. Some of the functions we will be using will want floats, so it is a good idea to *cast* the value into a new *float* variable (right at the start of `display()`).
 
-```C+++
+```C++
 float t = static_cast<float>(currentTime);
 ```
 
@@ -34,26 +34,26 @@ Therefore, in order to *pass the time* to the shader, we will need to apply any 
 float cycle = fmod(t, 2.0f);
 float yOffset = 0.5f - abs(cycle - 1.0f);
 glm::mat4 mvp = glm::mat4(1.0f);  // This line already is in your code
-mvp = glm::translate(mvp, glm::vec3(0.0f, yOffset, 0.of));
+mvp = glm::translate(mvp, glm::vec3(0.0f, yOffset, 0.0f));
 ```
 
 That's it! What do you think this code does? Really give it a good noodling before you build and run the program. What happened to our triangle? Were you correct?
 
 **Hide Answer: You should have seen the triangle bouncing between the top and bottom of the window. If you did not, please go back over your code to check that everything is correct**
 
-Quickly, let's take a look at what we did. We defined a *cycle* that represents two seconds (`fmod(t, 2.0f)`). This value will go from 0 &rarr; 1 &rarr; 0 &rarr; 1. We then use this value to determine which direction we want to move the object (`float yOffset = 0.5f - abs(cycle - 1.0f);`). This produces a value between -0.5 and 0.5. We then use `translate` to apply our *transform* to our `Model Matrix`.
+Quickly, let's take a look at what we did. We defined a *cycle* that represents two seconds (`fmod(t, 2.0f)`). This value ramps from 0 &rarr; 2 and then jumps back to 0. Taking `abs(cycle - 1.0f)` folds that ramp into a value that goes 1 &rarr; 0 &rarr; 1. We then use this value to determine which direction we want to move the object (`float yOffset = 0.5f - abs(cycle - 1.0f);`). This produces a value between -0.5 and 0.5. We then use `translate` to apply our *transform* to our `Model Matrix`.
 
 Everything else could stay the same as we already had code to fill the uniform variable with our `mvp` variable. The vertex data is still sent as is to the shader, where the *translation* is applied using matrix math. This allows us to use the same vertices to represent multiple objects, but with different positions (more on this later).
 
-You know what? That motion seems very bouncy. I bet we can smooth it out some. Replace the `yOffset` calculation with `0.5f(t * glm::pi<float>())`. This time, when you run it, pay close attention to speed of the triangle at the top and bottom of its animation. It seems smoother, doesn't it?
+You know what? That motion seems very bouncy. I bet we can smooth it out some. Replace the `yOffset` calculation with `0.5f * sin(t * glm::pi<float>())`. This time, when you run it, pay close attention to the speed of the triangle at the top and bottom of its animation. It seems smoother, doesn't it?
 
 To understand why this is the case, let's look at a `sin` graph.
 
 ![Graph of sin(x/2)](../images/week_3/sin_graph.png)
 
-Notice how the *slope* of the line decreases as it gets closer to the top and the bottom of the wave? The code we just swapped in harnesses this feature of sin waves to *smooth out* our animation. As you dig deeper into animation, you will discover sin (and cos) waves everywhere!
+Notice how the *slope* of the line decreases as it gets closer to the top and the bottom of the wave? The code we just swapped in harnesses this feature of sine waves ... you will discover sine (and cosine) waves everywhere! to *smooth out* our animation. As you dig deeper into animation, you will discover sin (and cos) waves everywhere!
 
-Speaking of cos, let's use it to add some lateral movement to our triangle! Add the following code and then update translation function call to include `xOffset`.
+Speaking of cos, let's use it to add some lateral movement to our triangle! Add the following code and then update the translation function call to include `xOffset`.
 
 ```C++
 float xOffset = 0.5f * cos(t * glm::pi<float>());
@@ -63,7 +63,7 @@ mvp = glm::translate(mvp, glm::vec3(xOffset, yOffset, 0.0f));
 
 Build and run this new version of your project. Behold! You now have an orbiting triangle! Take some time and play around with different ways to calculate the `yOffset` and `xOffset`. Some suggestions:
 
-* What happens if you flip the x and y offsets to use cos and sin (respectively)?
+* What happens if you flip the x and y offsets to use sin and cos (respectively)?
 * What happens when you change the constant you multiply the sin/cos result by?
 * What happens if you multiply `t` by `2` in one of the sin/cos functions?
 * What happens if you divide `t` by `2` in one of the sin/cos functions?
@@ -74,7 +74,7 @@ We can also use time to change the color based on position! For this, we need to
 
 We need to update our Vertex Shader to add a new uniform.
 
-```C++
+```GLSL
 uniform vec3 posColor;
 ```
 
@@ -84,7 +84,7 @@ Back in our application, we need to set a new location variable. Let's put this 
 
 ```C++
 GLint mvpLoc = -1; // existing variable
-GLint posColorLoc = -1 // New variable
+GLint posColorLoc = -1; // New variable
 ```
 
 Now, we need to fill this variable. Do you recall how?
@@ -109,7 +109,7 @@ Finally, we need to set the uniform variable with our new vector.
 glUniform3fv(posColorLoc, 1, glm::value_ptr(posColor));
 ```
 
-That is it for our application changes, now we need to update our Vertex Shader. I am just going to give you entire shader code while noting the changes.
+That is it for our application changes. For reference, here is the entire updated Vertex Shader, with the changes noted.
 
 ```GLSL
 #version 410 core
@@ -133,7 +133,7 @@ void main() {
 
 Notice, we are leaving in place our previous `color` variable, but it really isn't necessary. Now that all our code is complete, take a moment to think what these changes will do to the color of the triangle. Pay close attention to how we filled `vec3 posColor`.
 
-**HIDE ANSWER: As the Y value increases, the amount of red in our color increases. As Y decreases, the more blue comes through. The triangle is pure red at the top of the animation, purple in the middle, and blue at the bottom.**
+**HIDE ANSWER: As the Y value increases, the amount of red in our color increases. As Y decreases, more blue comes through. The triangle is pure red at the top of the animation, purple in the middle, and blue at the bottom.**
 
 I am going to again suggest that you experiment with how to play with color in connection with the *time*. Some suggestions:
 
